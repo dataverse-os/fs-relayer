@@ -1,0 +1,20 @@
+[package]
+name = "dataverse-file-relayer"
+version = "0.1.0"
+edition = "2021"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4.4.0"
+anyhow = "1.0.75"
+ceramic-core = { git = "https://github.com/3box/rust-ceramic.git", branch = "main" }
+confy = "0.5.1"
+dataverse-file-system = { path = "../crates/file-system" }
+dataverse-iroh-store = { path = "../crates/iroh-store" }
+dataverse-types = { path = "../crates/types" }
+directories = "5.0.1"
+env_logger = "0.10.0"
+serde = "1.0.190"
+serde_json = "1.0.108"
+tokio = "1.33.0"
+uuid = "1.5.0"

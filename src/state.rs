@@ -1,0 +1,51 @@
+use std::sync::Arc;
+
+use dataverse_file_system::{file, file::StreamFile, file::StreamFileTrait};
+use dataverse_iroh_store::commit::{Data, Genesis};
+use dataverse_types::ceramic::StreamId;
+
+#[derive(Clone)]
+pub struct AppState<'a> {
+    pub iroh_store: Arc<dataverse_iroh_store::Client>,
+    pub file_client: Arc<file::Client<'a>>,
+}
+
+impl AppState<'_> {
+    pub fn new(cache_client: dataverse_iroh_store::Client) -> Self {
+        let iroh_store = Arc::new(cache_client);
+        Self {
+            iroh_store: iroh_store.clone(),
+            file_client: Arc::new(file::Client::new(Some(iroh_store))),
+        }
+    }
+
+    pub async fn create_stream(
+        &self,
+        _dapp_id: &uuid::Uuid,
+        genesis: Genesis,
+    ) -> anyhow::Result<()> {
+        self.iroh_store.save_genesis_commit(genesis).await?;
+        Ok(())
+    }
+
+    pub async fn update_stream(&self, _dapp_id: &uuid::Uuid, data: Data) -> anyhow::Result<()> {
+        self.iroh_store.save_data_commit(data).await?;
+        Ok(())
+    }
+
+    pub async fn load_file(
+        &self,
+        dapp_id: &uuid::Uuid,
+        stream_id: &StreamId,
+    ) -> anyhow::Result<StreamFile> {
+        self.file_client.load_file(&dapp_id, &stream_id).await
+    }
+
+    pub async fn load_files(
+        &self,
+        account: &Option<String>,
+        model_id: &StreamId,
+    ) -> anyhow::Result<Vec<StreamFile>> {
+        self.file_client.load_files(&account, &model_id).await
+    }
+}
