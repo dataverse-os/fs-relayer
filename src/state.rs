@@ -2,7 +2,8 @@ use std::sync::Arc;
 
 use dataverse_file_system::{file, file::StreamFile, file::StreamFileTrait};
 use dataverse_iroh_store::commit::{Data, Genesis};
-use dataverse_types::ceramic::StreamId;
+use dataverse_types::ceramic::{StreamId, StreamState};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
 pub struct AppState<'a> {
@@ -23,14 +24,19 @@ impl AppState<'_> {
         &self,
         _dapp_id: &uuid::Uuid,
         genesis: Genesis,
-    ) -> anyhow::Result<()> {
-        self.iroh_store.save_genesis_commit(genesis).await?;
-        Ok(())
+    ) -> anyhow::Result<StreamStateResponse> {
+        self.iroh_store
+            .save_genesis_commit(genesis)
+            .await?
+            .try_into()
     }
 
-    pub async fn update_stream(&self, _dapp_id: &uuid::Uuid, data: Data) -> anyhow::Result<()> {
-        self.iroh_store.save_data_commit(data).await?;
-        Ok(())
+    pub async fn update_stream(
+        &self,
+        _dapp_id: &uuid::Uuid,
+        data: Data,
+    ) -> anyhow::Result<StreamStateResponse> {
+        self.iroh_store.save_data_commit(data).await?.try_into()
     }
 
     pub async fn load_file(
@@ -47,5 +53,23 @@ impl AppState<'_> {
         model_id: &StreamId,
     ) -> anyhow::Result<Vec<StreamFile>> {
         self.file_client.load_files(&account, &model_id).await
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StreamStateResponse {
+    pub stream_id: StreamId,
+    pub state: StreamState,
+}
+
+impl TryFrom<StreamState> for StreamStateResponse {
+    type Error = anyhow::Error;
+
+    fn try_from(value: StreamState) -> Result<Self, Self::Error> {
+        Ok(Self {
+            stream_id: value.stream_id()?,
+            state: value,
+        })
     }
 }

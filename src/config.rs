@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use anyhow::Context;
 use directories::ProjectDirs;
 
-static APP_NAME: &str = "dataverse-node";
+static APP_NAME: &str = "dataverse-file-relayer";
 
 #[derive(serde::Deserialize, serde::Serialize, Default)]
 pub struct Config {
@@ -16,11 +16,9 @@ pub struct Config {
 #[derive(serde::Deserialize, serde::Serialize, Default)]
 pub struct IrohConfig {
     pub key: String,
-    pub author: String,
-    pub model: String,
-    pub streams: String,
-    pub patch: String,
-    pub genesis: String,
+    author: String,
+    model: String,
+    streams: String,
 }
 
 impl Into<dataverse_iroh_store::KeySet> for IrohConfig {
@@ -29,8 +27,6 @@ impl Into<dataverse_iroh_store::KeySet> for IrohConfig {
             author: self.author,
             model: self.model,
             streams: self.streams,
-            patch: self.patch,
-            genesis: self.genesis,
         }
     }
 }
