@@ -39,6 +39,17 @@ impl AppState<'_> {
         self.iroh_store.save_data_commit(data).await?.try_into()
     }
 
+    pub async fn load_stream(
+        &self,
+        dapp_id: &uuid::Uuid,
+        stream_id: &StreamId,
+    ) -> anyhow::Result<StreamStateResponse> {
+        self.file_client
+            .load_stream(&dapp_id, &stream_id)
+            .await?
+            .try_into()
+    }
+
     pub async fn load_file(
         &self,
         dapp_id: &uuid::Uuid,
