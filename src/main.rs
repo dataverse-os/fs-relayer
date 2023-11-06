@@ -18,7 +18,7 @@ use std::str::FromStr;
 struct LoadFileQuery {
     stream_id: StreamId,
     dapp_id: uuid::Uuid,
-    format: String,
+    format: Option<String>,
 }
 
 #[get("/dataverse/stream")]
@@ -26,21 +26,23 @@ async fn load_file(
     query: web::Query<LoadFileQuery>,
     state: web::Data<AppState<'_>>,
 ) -> impl Responder {
-    match query.format.as_str() {
-        "ceramic" => match state.load_stream(&query.dapp_id, &query.stream_id).await {
-            Ok(file) => HttpResponse::Ok()
-                .insert_header(header::ContentType::json())
-                .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
-                .json(file),
-            Err(err) => error::ErrorInternalServerError(err.to_string()).error_response(),
-        },
-        _ => match state.load_file(&query.dapp_id, &query.stream_id).await {
-            Ok(file) => HttpResponse::Ok()
-                .insert_header(header::ContentType::json())
-                .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
-                .json(file),
-            Err(err) => error::ErrorInternalServerError(err.to_string()).error_response(),
-        },
+    if let Some(format) = &query.format {
+        if format == "ceramic" {
+            return match state.load_stream(&query.dapp_id, &query.stream_id).await {
+                Ok(file) => HttpResponse::Ok()
+                    .insert_header(header::ContentType::json())
+                    .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
+                    .json(file),
+                Err(err) => error::ErrorInternalServerError(err.to_string()).error_response(),
+            };
+        }
+    }
+    match state.load_file(&query.dapp_id, &query.stream_id).await {
+        Ok(file) => HttpResponse::Ok()
+            .insert_header(header::ContentType::json())
+            .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
+            .json(file),
+        Err(err) => error::ErrorInternalServerError(err.to_string()).error_response(),
     }
 }
 
