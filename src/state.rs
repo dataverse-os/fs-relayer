@@ -22,21 +22,24 @@ impl AppState<'_> {
 
     pub async fn create_stream(
         &self,
-        _dapp_id: &uuid::Uuid,
+        dapp_id: &uuid::Uuid,
         genesis: Genesis,
     ) -> anyhow::Result<StreamStateResponse> {
         self.iroh_store
-            .save_genesis_commit(genesis)
+            .save_genesis_commit(dapp_id, genesis)
             .await?
             .try_into()
     }
 
     pub async fn update_stream(
         &self,
-        _dapp_id: &uuid::Uuid,
+        dapp_id: &uuid::Uuid,
         data: Data,
     ) -> anyhow::Result<StreamStateResponse> {
-        self.iroh_store.save_data_commit(data).await?.try_into()
+        self.iroh_store
+            .save_data_commit(dapp_id, data)
+            .await?
+            .try_into()
     }
 
     pub async fn load_stream(
