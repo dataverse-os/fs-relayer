@@ -7,7 +7,6 @@ edition = "2021"
 [dependencies]
 actix-web = "4.4.0"
 anyhow = "1.0.75"
-ceramic-core = { git = "https://github.com/3box/rust-ceramic.git", branch = "main" }
 confy = "0.5.1"
 dataverse-file-system = { path = "../crates/file-system" }
 dataverse-iroh-store = { path = "../crates/iroh-store" }

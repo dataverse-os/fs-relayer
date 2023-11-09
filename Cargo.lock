@@ -929,8 +929,8 @@ dependencies = [
 
 [[package]]
 name = "ceramic-core"
-version = "0.8.1"
-source = "git+https://github.com/3box/rust-ceramic.git?branch=main#ca49fd33ef5168f9f4286bdd3246fdecb55411ee"
+version = "0.8.2"
+source = "git+https://github.com/ceramicnetwork/rust-ceramic.git?branch=main#2fc5bde57eec121380e8af5555a7159f9bfb4168"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -955,8 +955,8 @@ dependencies = [
 
 [[package]]
 name = "ceramic-event"
-version = "0.8.1"
-source = "git+https://github.com/3box/rust-ceramic.git?branch=main#ca49fd33ef5168f9f4286bdd3246fdecb55411ee"
+version = "0.8.2"
+source = "git+https://github.com/ceramicnetwork/rust-ceramic.git?branch=main#2fc5bde57eec121380e8af5555a7159f9bfb4168"
 dependencies = [
  "anyhow",
  "ceramic-core",
@@ -1688,7 +1688,6 @@ version = "0.1.0"
 dependencies = [
  "actix-web",
  "anyhow",
- "ceramic-core",
  "confy",
  "dataverse-file-system",
  "dataverse-iroh-store",
@@ -2459,9 +2458,9 @@ dependencies = [
 
 [[package]]
 name = "fiat-crypto"
-version = "0.2.2"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a481586acf778f1b1455424c343f71124b048ffa5f4fc3f8f6ae9dc432dcb3c7"
+checksum = "f69037fe1b785e84986b4f2cbcf647381876a00671d25ceef715d7812dd7e1dd"
 
 [[package]]
 name = "fixed-hash"

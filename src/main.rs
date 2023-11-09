@@ -22,7 +22,7 @@ struct LoadFileQuery {
 }
 
 #[get("/dataverse/stream")]
-async fn load_file(
+async fn load_stream(
     query: web::Query<LoadFileQuery>,
     state: web::Data<AppState<'_>>,
 ) -> impl Responder {
@@ -53,7 +53,7 @@ struct LoadFilesQuery {
 }
 
 #[get("/dataverse/streams")]
-async fn load_files(
+async fn load_streams(
     query: web::Query<LoadFilesQuery>,
     state: web::Data<AppState<'_>>,
 ) -> impl Responder {
@@ -121,8 +121,8 @@ async fn main() -> anyhow::Result<()> {
         App::new()
             .wrap(Logger::default())
             .app_data(web::Data::new(state.clone()))
-            .service(load_file)
-            .service(load_files)
+            .service(load_stream)
+            .service(load_streams)
             .service(post_create_stream)
             .service(put_update_stream)
     })
