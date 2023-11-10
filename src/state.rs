@@ -1,6 +1,9 @@
-use std::sync::Arc;
+use futures::executor::block_on;
+use std::{sync::Arc, thread};
 
-use dataverse_file_system::{file, file::StreamFile, file::StreamFileTrait};
+use dataverse_file_system::{
+    file, file::StreamFile, file::StreamFileTrait, stream::StreamPublisher,
+};
 use dataverse_iroh_store::commit::{Data, Genesis};
 use dataverse_types::ceramic::{StreamId, StreamState};
 use serde::{Deserialize, Serialize};
@@ -25,10 +28,21 @@ impl AppState<'_> {
         dapp_id: &uuid::Uuid,
         genesis: Genesis,
     ) -> anyhow::Result<StreamStateResponse> {
-        self.iroh_store
+        let (stream, state) = self
+            .iroh_store
             .save_genesis_commit(dapp_id, genesis)
-            .await?
-            .try_into()
+            .await?;
+        let iroh_store = self.iroh_store.clone();
+        let stream = stream.clone();
+        thread::spawn(move || {
+            block_on(async move {
+                log::debug!(
+                    "thread::spawn: {:?}",
+                    iroh_store.publish_stream(stream).await
+                );
+            })
+        });
+        state.try_into()
     }
 
     pub async fn update_stream(
@@ -36,10 +50,18 @@ impl AppState<'_> {
         dapp_id: &uuid::Uuid,
         data: Data,
     ) -> anyhow::Result<StreamStateResponse> {
-        self.iroh_store
-            .save_data_commit(dapp_id, data)
-            .await?
-            .try_into()
+        let (stream, state) = self.iroh_store.save_data_commit(dapp_id, data).await?;
+        let iroh_store = self.iroh_store.clone();
+        let stream = stream.clone();
+        thread::spawn(move || {
+            block_on(async move {
+                log::debug!(
+                    "thread::spawn: {:?}",
+                    iroh_store.publish_stream(stream).await
+                );
+            })
+        });
+        state.try_into()
     }
 
     pub async fn load_stream(
