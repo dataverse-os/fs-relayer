@@ -106,7 +106,8 @@ async fn main() -> anyhow::Result<()> {
     let cfg = Config::load()?;
     let data_path = cfg.data_path()?;
     let key = dataverse_iroh_store::SecretKey::from_str(&cfg.iroh.key)?;
-    let iroh_store = dataverse_iroh_store::Client::new(data_path, key, cfg.iroh.into()).await?;
+    let iroh_store =
+        dataverse_iroh_store::Client::new(data_path, key, cfg.iroh.into(), cfg.kubo_path).await?;
     let status = iroh_store.iroh.node.status().await?;
     log::info!("iroh status: {:?}", status);
     log::info!("finish init database");

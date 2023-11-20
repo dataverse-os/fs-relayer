@@ -8,7 +8,8 @@ static APP_NAME: &str = "dataverse-file-relayer";
 #[derive(serde::Deserialize, serde::Serialize, Default)]
 pub struct Config {
     data_path: Option<String>,
-
+    pub kubo_path: String,
+    pub index_models: IndexModels,
     pub ceramic: String,
     pub iroh: IrohConfig,
 }
@@ -28,6 +29,20 @@ impl Into<dataverse_iroh_store::KeySet> for IrohConfig {
             model: self.model,
             streams: self.streams,
         }
+    }
+}
+
+#[derive(serde::Deserialize, serde::Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum IndexModels {
+    None,
+    All,
+    Dapps(Vec<uuid::Uuid>),
+}
+
+impl Default for IndexModels {
+    fn default() -> Self {
+        IndexModels::All
     }
 }
 
