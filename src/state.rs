@@ -1,10 +1,10 @@
 use futures::executor::block_on;
 use std::{sync::Arc, thread};
 
+use dataverse_ceramic::commit;
 use dataverse_file_system::{
     file, file::StreamFile, file::StreamFileTrait, stream::StreamPublisher,
 };
-use dataverse_iroh_store::commit::{Data, Genesis};
 use dataverse_types::ceramic::{StreamId, StreamState};
 use serde::{Deserialize, Serialize};
 
@@ -26,7 +26,7 @@ impl AppState<'_> {
     pub async fn create_stream(
         &self,
         dapp_id: &uuid::Uuid,
-        genesis: Genesis,
+        genesis: commit::Genesis,
     ) -> anyhow::Result<StreamStateResponse> {
         let (stream, state) = self
             .iroh_store
@@ -48,7 +48,7 @@ impl AppState<'_> {
     pub async fn update_stream(
         &self,
         dapp_id: &uuid::Uuid,
-        data: Data,
+        data: commit::Data,
     ) -> anyhow::Result<StreamStateResponse> {
         let (stream, state) = self.iroh_store.save_data_commit(dapp_id, data).await?;
         let iroh_store = self.iroh_store.clone();

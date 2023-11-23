@@ -1798,6 +1798,7 @@ dependencies = [
  "actix-web",
  "anyhow",
  "confy",
+ "dataverse-ceramic",
  "dataverse-file-system",
  "dataverse-iroh-store",
  "dataverse-types",

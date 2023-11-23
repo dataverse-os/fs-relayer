@@ -8,6 +8,7 @@ edition = "2021"
 actix-web = "4.4.0"
 anyhow = "1.0.75"
 confy = "0.5.1"
+dataverse-ceramic = { path = "../crates/ceramic" }
 dataverse-file-system = { path = "../crates/file-system" }
 dataverse-iroh-store = { path = "../crates/iroh-store" }
 dataverse-types = { path = "../crates/types" }

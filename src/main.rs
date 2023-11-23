@@ -2,12 +2,12 @@ mod config;
 mod response;
 mod state;
 
-use crate::config::Config;
+use crate::{config::Config, response::JsonResponse};
+use dataverse_ceramic::commit;
 use state::*;
 
 use actix_web::{
-    error, get, http::header, middleware::Logger, post, put, web, App, HttpResponse, HttpServer,
-    Responder,
+    get, http::header, middleware::Logger, post, put, web, App, HttpResponse, HttpServer, Responder,
 };
 use dataverse_types::ceramic::StreamId;
 use env_logger::Env;
@@ -33,7 +33,7 @@ async fn load_stream(
                     .insert_header(header::ContentType::json())
                     .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
                     .json(file),
-                Err(err) => error::ErrorInternalServerError(err.to_string()).error_response(),
+                Err(err) => HttpResponse::BadRequest().json_error(err.to_string()),
             };
         }
     }
@@ -42,7 +42,7 @@ async fn load_stream(
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
             .json(file),
-        Err(err) => error::ErrorInternalServerError(err.to_string()).error_response(),
+        Err(err) => HttpResponse::BadRequest().json_error(err.to_string()),
     }
 }
 
@@ -62,7 +62,7 @@ async fn load_streams(
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
             .json(file),
-        Err(err) => error::ErrorInternalServerError(err.to_string()).error_response(),
+        Err(err) => HttpResponse::BadRequest().json_error(err.to_string()),
     }
 }
 
@@ -74,7 +74,7 @@ struct DappQuery {
 #[post("/dataverse/stream")]
 async fn post_create_stream(
     query: web::Query<DappQuery>,
-    payload: web::Json<dataverse_iroh_store::commit::Genesis>,
+    payload: web::Json<commit::Genesis>,
     state: web::Data<AppState<'_>>,
 ) -> impl Responder {
     match state.create_stream(&query.dapp_id, payload.0).await {
@@ -82,14 +82,14 @@ async fn post_create_stream(
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
             .json(stream),
-        Err(err) => HttpResponse::BadRequest().json(err.to_string()),
+        Err(err) => HttpResponse::BadRequest().json_error(err.to_string()),
     }
 }
 
 #[put("/dataverse/stream")]
 async fn put_update_stream(
     query: web::Query<DappQuery>,
-    payload: web::Json<dataverse_iroh_store::commit::Data>,
+    payload: web::Json<commit::Data>,
     state: web::Data<AppState<'_>>,
 ) -> impl Responder {
     match state.update_stream(&query.dapp_id, payload.0).await {
@@ -97,7 +97,7 @@ async fn put_update_stream(
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
             .json(stream),
-        Err(err) => HttpResponse::BadRequest().json(err.to_string()),
+        Err(err) => HttpResponse::BadRequest().json_error(err.to_string()),
     }
 }
 
