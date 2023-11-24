@@ -3,12 +3,12 @@ mod response;
 mod state;
 
 use crate::{config::Config, response::JsonResponse};
-use dataverse_ceramic::commit;
 use state::*;
 
 use actix_web::{
     get, http::header, middleware::Logger, post, put, web, App, HttpResponse, HttpServer, Responder,
 };
+use dataverse_ceramic::commit;
 use dataverse_types::ceramic::StreamId;
 use env_logger::Env;
 use serde::Deserialize;
@@ -103,18 +103,16 @@ async fn put_update_stream(
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
     let cfg = Config::load()?;
     let data_path = cfg.data_path()?;
     let key = dataverse_iroh_store::SecretKey::from_str(&cfg.iroh.key)?;
     let iroh_store =
         dataverse_iroh_store::Client::new(data_path, key, cfg.iroh.into(), cfg.kubo_path).await?;
-    let status = iroh_store.iroh.node.status().await?;
-    log::info!("iroh status: {:?}", status);
-    log::info!("finish init database");
-
-    env_logger::init_from_env(Env::default().default_filter_or("info"));
-
     let state = AppState::new(iroh_store);
+    let addrs = ("0.0.0.0", 8080);
+
+    log::info!("start server on {}:{}", addrs.0, addrs.1);
     HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())
@@ -124,7 +122,7 @@ async fn main() -> anyhow::Result<()> {
             .service(post_create_stream)
             .service(put_update_stream)
     })
-    .bind(("0.0.0.0", 8080))?
+    .bind(addrs)?
     .run()
     .await?;
     Ok(())

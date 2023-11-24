@@ -49,9 +49,9 @@ impl Default for IndexModels {
 impl Config {
     pub fn load() -> anyhow::Result<Self> {
         let file = confy::get_configuration_file_path(APP_NAME, None)?;
-        println!("The configuration file path is: {:#?}", file);
+        log::info!("use config path: {:#?}", file);
         let cfg: Self = confy::load(APP_NAME, None)?;
-        println!("The data path is: {:#?}", cfg.data_path()?);
+        log::info!("use data path: {:#?}", cfg.data_path()?);
         Ok(cfg)
     }
 
