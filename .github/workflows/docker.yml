@@ -27,14 +27,6 @@ jobs:
         with:
           path: node
 
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          repository: dataverse-os/network-crates
-          ref: feat-kubo-op
-          ssh-key: ${{ secrets.CRATES_DEPLOY_KEY }}
-          path: crates
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

@@ -8,10 +8,10 @@ edition = "2021"
 actix-web = "4.4.0"
 anyhow = "1.0.75"
 confy = "0.5.1"
-dataverse-ceramic = { path = "../crates/ceramic" }
-dataverse-file-system = { path = "../crates/file-system" }
-dataverse-iroh-store = { path = "../crates/iroh-store" }
-dataverse-types = { path = "../crates/types" }
+dataverse-ceramic = { git = "https://github.com/dataverse-os/network-crates", branch = "feat-kubo-op"}
+dataverse-file-system = { git = "https://github.com/dataverse-os/network-crates", branch = "feat-kubo-op"}
+dataverse-iroh-store = { git = "https://github.com/dataverse-os/network-crates", branch = "feat-kubo-op"}
+dataverse-types = { git = "https://github.com/dataverse-os/network-crates", branch = "feat-kubo-op"}
 directories = "5.0.1"
 env_logger = "0.10.0"
 futures = "0.3.29"
@@ -20,3 +20,14 @@ serde = "1.0.190"
 serde_json = "1.0.108"
 tokio = "1.33.0"
 uuid = "1.5.0"
+
+[patch.'https://github.com/ceramicnetwork/rust-ceramic']
+ceramic-core = { git = "https://github.com/dataverse-os/rust-ceramic", branch = "patch-kubo-block-put" }
+ceramic-event = { git = "https://github.com/dataverse-os/rust-ceramic", branch = "patch-kubo-block-put" }
+ceramic-kubo-rpc-server = { git = "https://github.com/dataverse-os/rust-ceramic", branch = "patch-kubo-block-put" }
+
+[patch.'https://github.com/3box/rust-ceramic']
+ceramic-event = { git = "https://github.com/dataverse-os/rust-ceramic", branch = "patch-kubo-block-put" }
+
+[patch.'https://github.com/3box/ceramic-http-client-rs']
+ceramic-http-client = { git = "https://github.com/dataverse-os/ceramic-http-client-rs", branch = "patch-methods"}

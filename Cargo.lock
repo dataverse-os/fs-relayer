@@ -993,7 +993,7 @@ dependencies = [
 [[package]]
 name = "ceramic-core"
 version = "0.9.0"
-source = "git+https://github.com/dataverse-os/rust-ceramic.git?branch=patch-kubo-block-put#9d0ae26bc6bf56e0e3bcd699c86355a8a65c64a8"
+source = "git+https://github.com/dataverse-os/rust-ceramic?branch=patch-kubo-block-put#9d0ae26bc6bf56e0e3bcd699c86355a8a65c64a8"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1019,7 +1019,7 @@ dependencies = [
 [[package]]
 name = "ceramic-event"
 version = "0.9.0"
-source = "git+https://github.com/dataverse-os/rust-ceramic.git?branch=patch-kubo-block-put#9d0ae26bc6bf56e0e3bcd699c86355a8a65c64a8"
+source = "git+https://github.com/dataverse-os/rust-ceramic?branch=patch-kubo-block-put#9d0ae26bc6bf56e0e3bcd699c86355a8a65c64a8"
 dependencies = [
  "anyhow",
  "ceramic-core",
@@ -1032,10 +1032,10 @@ dependencies = [
 [[package]]
 name = "ceramic-http-client"
 version = "0.1.0"
+source = "git+https://github.com/dataverse-os/ceramic-http-client-rs?branch=patch-methods#8918ed0b85789c40a1c6dad43d14fe16e56f3c42"
 dependencies = [
  "anyhow",
  "ceramic-event",
- "dataverse-types",
  "json-patch",
  "reqwest",
  "schemars",
@@ -1048,7 +1048,7 @@ dependencies = [
 [[package]]
 name = "ceramic-kubo-rpc-server"
 version = "0.9.0"
-source = "git+https://github.com/dataverse-os/rust-ceramic.git?branch=patch-kubo-block-put#9d0ae26bc6bf56e0e3bcd699c86355a8a65c64a8"
+source = "git+https://github.com/dataverse-os/rust-ceramic?branch=patch-kubo-block-put#9d0ae26bc6bf56e0e3bcd699c86355a8a65c64a8"
 dependencies = [
  "async-trait",
  "chrono",
@@ -1602,6 +1602,7 @@ dependencies = [
 [[package]]
 name = "dapp-table-client"
 version = "0.1.0"
+source = "git+https://github.com/dataverse-os/network-crates?branch=feat-kubo-op#899ae868ddb1a0e823ebbef0b5462b89e1c37f01"
 dependencies = [
  "anyhow",
  "graphql_client",
@@ -1758,6 +1759,7 @@ dependencies = [
 [[package]]
 name = "dataverse-ceramic"
 version = "0.1.0"
+source = "git+https://github.com/dataverse-os/network-crates?branch=feat-kubo-op#899ae868ddb1a0e823ebbef0b5462b89e1c37f01"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1815,6 +1817,7 @@ dependencies = [
 [[package]]
 name = "dataverse-file-system"
 version = "0.1.0"
+source = "git+https://github.com/dataverse-os/network-crates?branch=feat-kubo-op#899ae868ddb1a0e823ebbef0b5462b89e1c37f01"
 dependencies = [
  "anyhow",
  "async-channel 2.1.0",
@@ -1847,6 +1850,7 @@ dependencies = [
 [[package]]
 name = "dataverse-iroh-store"
 version = "0.1.0"
+source = "git+https://github.com/dataverse-os/network-crates?branch=feat-kubo-op#899ae868ddb1a0e823ebbef0b5462b89e1c37f01"
 dependencies = [
  "anyhow",
  "bytes 1.5.0",
@@ -1882,10 +1886,12 @@ dependencies = [
 [[package]]
 name = "dataverse-types"
 version = "0.1.0"
+source = "git+https://github.com/dataverse-os/network-crates?branch=feat-kubo-op#899ae868ddb1a0e823ebbef0b5462b89e1c37f01"
 dependencies = [
  "anyhow",
  "async-trait",
  "ceramic-core",
+ "ceramic-http-client",
  "dapp-table-client",
  "hex",
  "int-enum",
