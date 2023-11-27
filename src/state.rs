@@ -2,10 +2,10 @@ use futures::executor::block_on;
 use std::{sync::Arc, thread};
 
 use dataverse_ceramic::commit;
+use dataverse_ceramic::{StreamId, StreamState};
 use dataverse_file_system::{
     file, file::StreamFile, file::StreamFileTrait, stream::StreamPublisher,
 };
-use dataverse_types::ceramic::{StreamId, StreamState};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]

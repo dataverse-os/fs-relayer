@@ -8,8 +8,7 @@ use state::*;
 use actix_web::{
     get, http::header, middleware::Logger, post, put, web, App, HttpResponse, HttpServer, Responder,
 };
-use dataverse_ceramic::commit;
-use dataverse_types::ceramic::StreamId;
+use dataverse_ceramic::{commit, StreamId};
 use env_logger::Env;
 use serde::Deserialize;
 use std::str::FromStr;
