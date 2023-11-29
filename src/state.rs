@@ -1,12 +1,15 @@
 use std::sync::Arc;
 
-use dataverse_ceramic::{commit, StreamId, StreamState};
-use dataverse_file_system::{file, file::StreamFile, file::StreamFileTrait};
+use dataverse_ceramic::{commit, event::Event, StreamId, StreamState};
+use dataverse_file_system::{
+    file,
+    file::StreamFileTrait,
+    file::{StreamEventSaver, StreamFile},
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
 pub struct AppState<'a> {
-    pub iroh_store: Arc<dataverse_iroh_store::Client>,
     pub file_client: Arc<file::Client<'a>>,
 }
 
@@ -14,8 +17,7 @@ impl AppState<'_> {
     pub fn new(cache_client: dataverse_iroh_store::Client) -> Self {
         let iroh_store = Arc::new(cache_client);
         Self {
-            iroh_store: iroh_store.clone(),
-            file_client: Arc::new(file::Client::new(Box::new(iroh_store))),
+            file_client: Arc::new(file::Client::new(iroh_store.clone(), iroh_store)),
         }
     }
 
@@ -24,9 +26,11 @@ impl AppState<'_> {
         dapp_id: &uuid::Uuid,
         genesis: commit::Genesis,
     ) -> anyhow::Result<StreamStateResponse> {
-        let (_, state) = self
-            .iroh_store
-            .save_genesis_commit(dapp_id, genesis)
+        let stream_id = genesis.stream_id()?;
+        let commit: Event = genesis.genesis.try_into()?;
+        let state = self
+            .file_client
+            .save_event(dapp_id, &stream_id, &commit)
             .await?;
         state.try_into()
     }
@@ -36,7 +40,11 @@ impl AppState<'_> {
         dapp_id: &uuid::Uuid,
         data: commit::Data,
     ) -> anyhow::Result<StreamStateResponse> {
-        let (_, state) = self.iroh_store.save_data_commit(dapp_id, data).await?;
+        let commit: Event = data.commit.try_into()?;
+        let state = self
+            .file_client
+            .save_event(dapp_id, &data.stream_id, &commit)
+            .await?;
         state.try_into()
     }
 
