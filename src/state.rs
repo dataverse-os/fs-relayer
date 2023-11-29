@@ -1,11 +1,7 @@
-use futures::executor::block_on;
-use std::{sync::Arc, thread};
+use std::sync::Arc;
 
-use dataverse_ceramic::commit;
-use dataverse_ceramic::{StreamId, StreamState};
-use dataverse_file_system::{
-    file, file::StreamFile, file::StreamFileTrait, stream::StreamPublisher,
-};
+use dataverse_ceramic::{commit, StreamId, StreamState};
+use dataverse_file_system::{file, file::StreamFile, file::StreamFileTrait};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
@@ -19,7 +15,7 @@ impl AppState<'_> {
         let iroh_store = Arc::new(cache_client);
         Self {
             iroh_store: iroh_store.clone(),
-            file_client: Arc::new(file::Client::new(Some(iroh_store))),
+            file_client: Arc::new(file::Client::new(Box::new(iroh_store))),
         }
     }
 
@@ -28,20 +24,10 @@ impl AppState<'_> {
         dapp_id: &uuid::Uuid,
         genesis: commit::Genesis,
     ) -> anyhow::Result<StreamStateResponse> {
-        let (stream, state) = self
+        let (_, state) = self
             .iroh_store
             .save_genesis_commit(dapp_id, genesis)
             .await?;
-        let iroh_store = self.iroh_store.clone();
-        let stream = stream.clone();
-        thread::spawn(move || {
-            block_on(async move {
-                log::debug!(
-                    "thread::spawn: {:?}",
-                    iroh_store.publish_stream(stream).await
-                );
-            })
-        });
         state.try_into()
     }
 
@@ -50,17 +36,7 @@ impl AppState<'_> {
         dapp_id: &uuid::Uuid,
         data: commit::Data,
     ) -> anyhow::Result<StreamStateResponse> {
-        let (stream, state) = self.iroh_store.save_data_commit(dapp_id, data).await?;
-        let iroh_store = self.iroh_store.clone();
-        let stream = stream.clone();
-        thread::spawn(move || {
-            block_on(async move {
-                log::debug!(
-                    "thread::spawn: {:?}",
-                    iroh_store.publish_stream(stream).await
-                );
-            })
-        });
+        let (_, state) = self.iroh_store.save_data_commit(dapp_id, data).await?;
         state.try_into()
     }
 
@@ -85,10 +61,10 @@ impl AppState<'_> {
 
     pub async fn load_files(
         &self,
-        account: &Option<String>,
+        account: Option<String>,
         model_id: &StreamId,
     ) -> anyhow::Result<Vec<StreamFile>> {
-        self.file_client.load_files(&account, &model_id).await
+        self.file_client.load_files(account, &model_id).await
     }
 }
 

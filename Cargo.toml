@@ -9,6 +9,7 @@ actix-web = "4.4.0"
 anyhow = "1.0.75"
 confy = "0.5.1"
 dataverse-ceramic = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
+dataverse-core = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
 dataverse-file-system = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
 dataverse-iroh-store = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
 directories = "5.0.1"

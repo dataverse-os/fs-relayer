@@ -56,7 +56,10 @@ async fn load_streams(
     query: web::Query<LoadFilesQuery>,
     state: web::Data<AppState<'_>>,
 ) -> impl Responder {
-    match state.load_files(&query.account, &query.model_id).await {
+    match state
+        .load_files(query.account.clone(), &query.model_id)
+        .await
+    {
         Ok(file) => HttpResponse::Ok()
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
