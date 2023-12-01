@@ -8,10 +8,10 @@ use state::*;
 use actix_web::{
     get, http::header, middleware::Logger, post, put, web, App, HttpResponse, HttpServer, Responder,
 };
-use dataverse_ceramic::{commit, StreamId};
+use dataverse_ceramic::{commit, kubo, StreamId};
 use env_logger::Env;
 use serde::Deserialize;
-use std::str::FromStr;
+use std::{str::FromStr, sync::Arc};
 
 #[derive(Deserialize)]
 struct LoadFileQuery {
@@ -109,8 +109,11 @@ async fn main() -> anyhow::Result<()> {
     let cfg = Config::load()?;
     let data_path = cfg.data_path()?;
     let key = dataverse_iroh_store::SecretKey::from_str(&cfg.iroh.key)?;
+    let kubo_client = kubo::new(&cfg.kubo_path);
+    let operator = Arc::new(kubo::Cached::new(kubo_client, cfg.cache_size)?);
     let iroh_store =
-        dataverse_iroh_store::Client::new(data_path, key, cfg.iroh.into(), cfg.kubo_path).await?;
+        dataverse_iroh_store::Client::new(data_path, key, cfg.iroh.into(), operator).await?;
+
     let state = AppState::new(iroh_store);
     let addrs = ("0.0.0.0", 8080);
 

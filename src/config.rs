@@ -9,6 +9,7 @@ static APP_NAME: &str = "dataverse-file-relayer";
 pub struct Config {
     data_path: Option<String>,
     pub kubo_path: String,
+    pub cache_size: usize,
     pub index_models: IndexModels,
     pub ceramic: String,
     pub iroh: IrohConfig,
