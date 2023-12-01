@@ -7,7 +7,7 @@ WORKDIR /build
 RUN cargo build --release --no-default-features -p dataverse-file-relayer
 
 FROM debian:bullseye
-RUN apt update && apt install -y ca-certificates
+RUN apt update && apt install -y ca-certificates libpq
 
 COPY --from=builder-rust /build/target/release/dataverse-file-relayer /usr/bin/file-relayer
 
