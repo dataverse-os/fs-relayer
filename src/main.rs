@@ -1,17 +1,20 @@
 mod config;
 mod response;
 mod state;
-
 use crate::{config::Config, response::JsonResponse};
+use dataverse_ceramic::kubo::MessageSubscriber;
+use futures::join;
 use state::*;
 
 use actix_web::{
     get, http::header, middleware::Logger, post, put, web, App, HttpResponse, HttpServer, Responder,
 };
+use dataverse_ceramic::network::Network;
 use dataverse_ceramic::{commit, kubo, StreamId};
 use env_logger::Env;
 use serde::Deserialize;
 use std::{str::FromStr, sync::Arc};
+use tokio::runtime::Runtime;
 
 #[derive(Deserialize)]
 struct LoadFileQuery {
@@ -107,18 +110,33 @@ async fn put_update_stream(
 async fn main() -> anyhow::Result<()> {
     env_logger::init_from_env(Env::default().default_filter_or("info"));
     let cfg = Config::load()?;
+    let kubo_client = kubo::new(&cfg.kubo_path);
+    let kubo_client = Arc::new(kubo_client);
+    let kubo_client_clone = Arc::clone(&kubo_client);
+
+    let operator = Arc::new(kubo::Cached::new(kubo_client, cfg.cache_size)?);
     let data_path = cfg.data_path()?;
     let key = dataverse_iroh_store::SecretKey::from_str(&cfg.iroh.key)?;
-    let kubo_client = kubo::new(&cfg.kubo_path);
-    let operator = Arc::new(kubo::Cached::new(kubo_client, cfg.cache_size)?);
     let iroh_store =
         dataverse_iroh_store::Client::new(data_path, key, cfg.iroh.into(), operator).await?;
+    let iroh_store = Arc::new(iroh_store);
+    let iroh_store_clone = iroh_store.clone();
+
+    let sub = tokio::task::spawn_blocking(|| {
+        let rt = Runtime::new().unwrap();
+        rt.block_on(async move {
+            let network = Network::Mainnet;
+            if let Err(err) = kubo_client_clone.subscribe(iroh_store_clone, network).await {
+                log::error!("subscribe error: {}", err);
+            };
+        });
+    });
+    log::info!("init kubo sub end");
 
     let state = AppState::new(iroh_store);
     let addrs = ("0.0.0.0", 8080);
 
-    log::info!("start server on {}:{}", addrs.0, addrs.1);
-    HttpServer::new(move || {
+    let web = HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())
             .app_data(web::Data::new(state.clone()))
@@ -128,7 +146,15 @@ async fn main() -> anyhow::Result<()> {
             .service(put_update_stream)
     })
     .bind(addrs)?
-    .run()
-    .await?;
+    .run();
+    log::info!("start server on {}:{}", addrs.0, addrs.1);
+
+    let (sub_res, web_res) = join!(sub, web);
+    if let Err(err) = sub_res {
+        log::error!("join error: {}", err);
+    }
+    if let Err(err) = web_res {
+        log::error!("web error: {}", err);
+    }
     Ok(())
 }

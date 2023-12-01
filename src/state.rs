@@ -14,8 +14,7 @@ pub struct AppState<'a> {
 }
 
 impl AppState<'_> {
-    pub fn new(iroh_client: dataverse_iroh_store::Client) -> Self {
-        let iroh_store = Arc::new(iroh_client);
+    pub fn new(iroh_store: Arc<dataverse_iroh_store::Client>) -> Self {
         let data = file::Client::new(iroh_store.clone(), iroh_store);
         Self {
             file_client: Arc::new(data),
