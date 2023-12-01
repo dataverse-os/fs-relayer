@@ -1668,7 +1668,7 @@ dependencies = [
 [[package]]
 name = "dapp-table-client"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#1950b788596a4db75be43b0b9de48c9f47f995be"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#7874c8a444b45a26e8a42e507a84bacfee1e587b"
 dependencies = [
  "anyhow",
  "graphql_client",
@@ -1825,7 +1825,7 @@ dependencies = [
 [[package]]
 name = "dataverse-ceramic"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#1950b788596a4db75be43b0b9de48c9f47f995be"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#7874c8a444b45a26e8a42e507a84bacfee1e587b"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1863,7 +1863,7 @@ dependencies = [
 [[package]]
 name = "dataverse-core"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#1950b788596a4db75be43b0b9de48c9f47f995be"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#7874c8a444b45a26e8a42e507a84bacfee1e587b"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1913,7 +1913,7 @@ dependencies = [
 [[package]]
 name = "dataverse-file-system"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#1950b788596a4db75be43b0b9de48c9f47f995be"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#7874c8a444b45a26e8a42e507a84bacfee1e587b"
 dependencies = [
  "anyhow",
  "async-channel 2.1.1",
@@ -1946,7 +1946,7 @@ dependencies = [
 [[package]]
 name = "dataverse-iroh-store"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#1950b788596a4db75be43b0b9de48c9f47f995be"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#7874c8a444b45a26e8a42e507a84bacfee1e587b"
 dependencies = [
  "anyhow",
  "async-trait",

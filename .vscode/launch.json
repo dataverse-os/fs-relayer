@@ -10,7 +10,9 @@
       },
       "args": [],
       "cwd": "${workspaceFolder}",
-      "env": {}
+      "env": {
+        "RUST_LOG": "dataverse=info,dataverse_ceramic::kubo=warn,actix_web=info"
+      }
     }
   ]
 }
