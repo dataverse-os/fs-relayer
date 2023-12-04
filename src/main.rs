@@ -26,7 +26,7 @@ struct LoadFileQuery {
 #[get("/dataverse/stream")]
 async fn load_stream(
     query: web::Query<LoadFileQuery>,
-    state: web::Data<AppState<'_>>,
+    state: web::Data<AppState>,
 ) -> impl Responder {
     if let Some(format) = &query.format {
         if format == "ceramic" {
@@ -57,7 +57,7 @@ struct LoadFilesQuery {
 #[get("/dataverse/streams")]
 async fn load_streams(
     query: web::Query<LoadFilesQuery>,
-    state: web::Data<AppState<'_>>,
+    state: web::Data<AppState>,
 ) -> impl Responder {
     match state
         .load_files(query.account.clone(), &query.model_id)
@@ -80,7 +80,7 @@ struct DappQuery {
 async fn post_create_stream(
     query: web::Query<DappQuery>,
     payload: web::Json<commit::Genesis>,
-    state: web::Data<AppState<'_>>,
+    state: web::Data<AppState>,
 ) -> impl Responder {
     match state.create_stream(&query.dapp_id, payload.0).await {
         Ok(stream) => HttpResponse::Ok()
@@ -95,7 +95,7 @@ async fn post_create_stream(
 async fn put_update_stream(
     query: web::Query<DappQuery>,
     payload: web::Json<commit::Data>,
-    state: web::Data<AppState<'_>>,
+    state: web::Data<AppState>,
 ) -> impl Responder {
     match state.update_stream(&query.dapp_id, payload.0).await {
         Ok(stream) => HttpResponse::Ok()

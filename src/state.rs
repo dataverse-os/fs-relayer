@@ -9,11 +9,11 @@ use dataverse_file_system::{
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
-pub struct AppState<'a> {
-    pub file_client: Arc<file::Client<'a>>,
+pub struct AppState {
+    pub file_client: Arc<file::Client>,
 }
 
-impl AppState<'_> {
+impl AppState {
     pub fn new(iroh_store: Arc<dataverse_iroh_store::Client>) -> Self {
         let data = file::Client::new(iroh_store.clone(), iroh_store);
         Self {
