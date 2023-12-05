@@ -1668,7 +1668,7 @@ dependencies = [
 [[package]]
 name = "dapp-table-client"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#bc9fdb641971b833e466538f16487058ab3e2d87"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#799be5cdde9531c843583c09329621e88834b9f9"
 dependencies = [
  "anyhow",
  "graphql_client",
@@ -1825,7 +1825,7 @@ dependencies = [
 [[package]]
 name = "dataverse-ceramic"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#bc9fdb641971b833e466538f16487058ab3e2d87"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#799be5cdde9531c843583c09329621e88834b9f9"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1856,6 +1856,7 @@ dependencies = [
  "ssi",
  "swagger",
  "tokio",
+ "tracing",
  "unsigned-varint",
  "url",
 ]
@@ -1863,7 +1864,7 @@ dependencies = [
 [[package]]
 name = "dataverse-core"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#bc9fdb641971b833e466538f16487058ab3e2d87"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#799be5cdde9531c843583c09329621e88834b9f9"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1907,13 +1908,15 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
+ "tracing",
+ "tracing-subscriber",
  "uuid 1.6.1",
 ]
 
 [[package]]
 name = "dataverse-file-system"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#bc9fdb641971b833e466538f16487058ab3e2d87"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#799be5cdde9531c843583c09329621e88834b9f9"
 dependencies = [
  "anyhow",
  "async-channel 2.1.1",
@@ -1947,7 +1950,7 @@ dependencies = [
 [[package]]
 name = "dataverse-iroh-store"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#bc9fdb641971b833e466538f16487058ab3e2d87"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#799be5cdde9531c843583c09329621e88834b9f9"
 dependencies = [
  "anyhow",
  "async-trait",

@@ -11,7 +11,6 @@ use actix_web::{
 };
 use dataverse_ceramic::network::Network;
 use dataverse_ceramic::{commit, kubo, StreamId};
-use env_logger::Env;
 use serde::Deserialize;
 use std::{str::FromStr, sync::Arc};
 use tokio::runtime::Runtime;
@@ -108,7 +107,8 @@ async fn put_update_stream(
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    env_logger::init_from_env(Env::default().default_filter_or("info"));
+    tracing_subscriber::fmt().init();
+
     let cfg = Config::load()?;
     let kubo_client = kubo::new(&cfg.kubo_path);
     let kubo_client = Arc::new(kubo_client);
@@ -127,11 +127,11 @@ async fn main() -> anyhow::Result<()> {
         rt.block_on(async move {
             let network = Network::Mainnet;
             if let Err(err) = kubo_client_clone.subscribe(iroh_store_clone, network).await {
-                log::error!("subscribe error: {}", err);
+                tracing::error!("subscribe error: {}", err);
             };
         });
     });
-    log::info!("init kubo sub end");
+    tracing::info!("init kubo sub end");
 
     let state = AppState::new(iroh_store);
     let addrs = ("0.0.0.0", 8080);
@@ -147,14 +147,14 @@ async fn main() -> anyhow::Result<()> {
     })
     .bind(addrs)?
     .run();
-    log::info!("start server on {}:{}", addrs.0, addrs.1);
+    tracing::info!("start server on {}:{}", addrs.0, addrs.1);
 
     let (sub_res, web_res) = join!(sub, web);
     if let Err(err) = sub_res {
-        log::error!("join error: {}", err);
+        tracing::error!("join error: {}", err);
     }
     if let Err(err) = web_res {
-        log::error!("web error: {}", err);
+        tracing::error!("web error: {}", err);
     }
     Ok(())
 }
