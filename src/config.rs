@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use anyhow::Context;
+use dataverse_ceramic::network::Network;
 use directories::ProjectDirs;
 
 static APP_NAME: &str = "dataverse-file-relayer";
@@ -9,6 +10,8 @@ static APP_NAME: &str = "dataverse-file-relayer";
 pub struct Config {
     data_path: Option<String>,
     pub kubo_path: String,
+    pub networks: Vec<Network>,
+
     pub cache_size: usize,
     pub index_models: IndexModels,
     pub ceramic: String,

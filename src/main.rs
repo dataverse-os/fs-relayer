@@ -1,19 +1,18 @@
 mod config;
 mod response;
 mod state;
+
 use crate::{config::Config, response::JsonResponse};
-use dataverse_ceramic::kubo::MessageSubscriber;
-use futures::join;
+use futures::future::join_all;
 use state::*;
 
-use actix_web::{
-    get, http::header, middleware::Logger, post, put, web, App, HttpResponse, HttpServer, Responder,
-};
-use dataverse_ceramic::network::Network;
+use actix_web::{get, post, put};
+use actix_web::{http::header, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
+use dataverse_ceramic::kubo::MessageSubscriber;
 use dataverse_ceramic::{commit, kubo, StreamId};
 use serde::Deserialize;
 use std::{str::FromStr, sync::Arc};
-use tokio::runtime::Runtime;
+use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[derive(Deserialize)]
 struct LoadFileQuery {
@@ -107,12 +106,15 @@ async fn put_update_stream(
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    tracing_subscriber::fmt().init();
+    tracing_subscriber::registry()
+        .with(fmt::layer())
+        .with(EnvFilter::from_default_env())
+        .init();
 
     let cfg = Config::load()?;
     let kubo_client = kubo::new(&cfg.kubo_path);
     let kubo_client = Arc::new(kubo_client);
-    let kubo_client_clone = Arc::clone(&kubo_client);
+    let kubo_client_clone = kubo_client.clone();
 
     let operator = Arc::new(kubo::Cached::new(kubo_client, cfg.cache_size)?);
     let data_path = cfg.data_path()?;
@@ -120,18 +122,19 @@ async fn main() -> anyhow::Result<()> {
     let iroh_store =
         dataverse_iroh_store::Client::new(data_path, key, cfg.iroh.into(), operator).await?;
     let iroh_store = Arc::new(iroh_store);
-    let iroh_store_clone = iroh_store.clone();
 
-    let sub = tokio::task::spawn_blocking(|| {
-        let rt = Runtime::new().unwrap();
-        rt.block_on(async move {
-            let network = Network::Mainnet;
-            if let Err(err) = kubo_client_clone.subscribe(iroh_store_clone, network).await {
-                tracing::error!("subscribe error: {}", err);
+    let mut subscribers = Vec::new();
+    for network in cfg.networks {
+        let iroh_store = iroh_store.clone();
+        let kubo_client_clone = kubo_client_clone.clone();
+        let sub = tokio::task::spawn(async move {
+            tracing::info!(?network, "subscribe to kubo topic");
+            if let Err(err) = kubo_client_clone.subscribe(iroh_store, network).await {
+                tracing::error!(?network, "subscribe error: {}", err);
             };
         });
-    });
-    tracing::info!("init kubo sub end");
+        subscribers.push(sub);
+    }
 
     let state = AppState::new(iroh_store);
     let addrs = ("0.0.0.0", 8080);
@@ -149,12 +152,11 @@ async fn main() -> anyhow::Result<()> {
     .run();
     tracing::info!("start server on {}:{}", addrs.0, addrs.1);
 
-    let (sub_res, web_res) = join!(sub, web);
-    if let Err(err) = sub_res {
-        tracing::error!("join error: {}", err);
-    }
-    if let Err(err) = web_res {
-        tracing::error!("web error: {}", err);
-    }
+    if let Err(err) = web.await {
+        tracing::error!("server error: {}", err);
+    };
+
+    join_all(subscribers).await;
+
     Ok(())
 }
