@@ -33,7 +33,16 @@ async fn load_stream(
                     .insert_header(header::ContentType::json())
                     .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
                     .json(file),
-                Err(err) => HttpResponse::BadRequest().json_error(err.to_string()),
+                Err(err) => {
+                    tracing::warn!(
+                        format = "ceramic",
+                        stream_id = query.stream_id.to_string(),
+                        dapp_id = query.dapp_id.to_string(),
+                        "load stream error: {}",
+                        err
+                    );
+                    HttpResponse::BadRequest().json_error(err.to_string())
+                }
             };
         }
     }
@@ -42,7 +51,16 @@ async fn load_stream(
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
             .json(file),
-        Err(err) => HttpResponse::BadRequest().json_error(err.to_string()),
+        Err(err) => {
+            tracing::warn!(
+                format = "dataverse",
+                stream_id = query.stream_id.to_string(),
+                dapp_id = query.dapp_id.to_string(),
+                "load stream error: {}",
+                err
+            );
+            HttpResponse::BadRequest().json_error(err.to_string())
+        }
     }
 }
 
@@ -65,7 +83,15 @@ async fn load_streams(
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
             .json(file),
-        Err(err) => HttpResponse::BadRequest().json_error(err.to_string()),
+        Err(err) => {
+            tracing::warn!(
+                model_id = query.model_id.to_string(),
+                account = query.account.clone(),
+                "load streams error: {}",
+                err
+            );
+            HttpResponse::BadRequest().json_error(err.to_string())
+        }
     }
 }
 
@@ -85,7 +111,14 @@ async fn post_create_stream(
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
             .json(stream),
-        Err(err) => HttpResponse::BadRequest().json_error(err.to_string()),
+        Err(err) => {
+            tracing::warn!(
+                dapp_id = query.dapp_id.to_string(),
+                "create stream error: {}",
+                err
+            );
+            HttpResponse::BadRequest().json_error(err.to_string())
+        }
     }
 }
 
@@ -100,7 +133,14 @@ async fn put_update_stream(
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
             .json(stream),
-        Err(err) => HttpResponse::BadRequest().json_error(err.to_string()),
+        Err(err) => {
+            tracing::warn!(
+                dapp_id = query.dapp_id.to_string(),
+                "update stream error: {}",
+                err
+            );
+            HttpResponse::BadRequest().json_error(err.to_string())
+        }
     }
 }
 
