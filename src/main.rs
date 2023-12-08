@@ -3,15 +3,16 @@ mod response;
 mod state;
 
 use crate::{config::Config, response::JsonResponse};
-use futures::future::join_all;
 use state::*;
+
+use std::{str::FromStr, sync::Arc};
 
 use actix_web::{get, post, put};
 use actix_web::{http::header, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
-use dataverse_ceramic::kubo::MessageSubscriber;
+use dataverse_ceramic::kubo::message::MessageSubscriber;
 use dataverse_ceramic::{commit, kubo, StreamId};
+use futures::future::join_all;
 use serde::Deserialize;
-use std::{str::FromStr, sync::Arc};
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[derive(Deserialize)]
