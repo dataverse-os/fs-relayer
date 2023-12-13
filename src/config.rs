@@ -12,6 +12,9 @@ pub struct Config {
     pub kubo_path: String,
     pub networks: Vec<Network>,
 
+    pub queue_dsn: String,
+    pub queue_pool: u32,
+
     pub cache_size: usize,
     pub index_models: IndexModels,
     pub ceramic: String,

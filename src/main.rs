@@ -4,6 +4,7 @@ mod state;
 
 use crate::{config::Config, response::JsonResponse};
 use state::*;
+use tokio::sync::Mutex;
 
 use std::{str::FromStr, sync::Arc};
 
@@ -157,7 +158,10 @@ async fn main() -> anyhow::Result<()> {
     let kubo_client = Arc::new(kubo_client);
     let kubo_client_clone = kubo_client.clone();
 
-    let operator = Arc::new(kubo::Cached::new(kubo_client, cfg.cache_size)?);
+    let queue = dataverse_file_system::task::new_queue(&cfg.queue_dsn, cfg.queue_pool).await?;
+    let queue = Arc::new(Mutex::new(queue));
+
+    let operator = Arc::new(kubo::Cached::new(kubo_client, queue, cfg.cache_size)?);
     let data_path = cfg.data_path()?;
     let key = dataverse_iroh_store::SecretKey::from_str(&cfg.iroh.key)?;
     let iroh_store =
