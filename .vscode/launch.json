@@ -11,7 +11,7 @@
       "args": [],
       "cwd": "${workspaceFolder}",
       "env": {
-        "RUST_LOG": "dataverse_ceramic::kubo=warn,dataverse=info,actix_web=info"
+        "RUST_LOG": "dataverse_ceramic::kubo::message=warn,dataverse=info,actix_web=info"
       }
     }
   ]

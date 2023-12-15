@@ -154,11 +154,19 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let cfg = Config::load()?;
+
     let kubo_client = kubo::new(&cfg.kubo_path);
     let kubo_client = Arc::new(kubo_client);
     let kubo_client_clone = kubo_client.clone();
+    kubo::task::init_kubo(&cfg.kubo_path);
 
+    let mut joinable = Vec::new();
     let queue = dataverse_file_system::task::new_queue(&cfg.queue_dsn, cfg.queue_pool).await?;
+    let mut pool = dataverse_file_system::task::build_pool(queue.clone(), 1);
+    joinable.push(tokio::spawn(async move {
+        tracing::info!("start queue");
+        pool.start().await;
+    }));
     let queue = Arc::new(Mutex::new(queue));
 
     let operator = Arc::new(kubo::Cached::new(kubo_client, queue, cfg.cache_size)?);
@@ -168,7 +176,6 @@ async fn main() -> anyhow::Result<()> {
         dataverse_iroh_store::Client::new(data_path, key, cfg.iroh.into(), operator).await?;
     let iroh_store = Arc::new(iroh_store);
 
-    let mut subscribers = Vec::new();
     for network in cfg.networks {
         let iroh_store = iroh_store.clone();
         let kubo_client_clone = kubo_client_clone.clone();
@@ -178,7 +185,7 @@ async fn main() -> anyhow::Result<()> {
                 tracing::error!(?network, "subscribe error: {}", err);
             };
         });
-        subscribers.push(sub);
+        joinable.push(sub);
     }
 
     let state = AppState::new(iroh_store);
@@ -195,13 +202,14 @@ async fn main() -> anyhow::Result<()> {
     })
     .bind(addrs)?
     .run();
+    joinable.push(tokio::spawn(async {
+        if let Err(err) = web.await {
+            tracing::error!("server error: {}", err);
+        };
+    }));
     tracing::info!("start server on {}:{}", addrs.0, addrs.1);
 
-    if let Err(err) = web.await {
-        tracing::error!("server error: {}", err);
-    };
-
-    join_all(subscribers).await;
+    join_all(joinable).await;
 
     Ok(())
 }

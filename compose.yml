@@ -1,0 +1,22 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PW}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    restart: always
+
+  ceramic-one:
+    container_name: ceramic-one
+    image: public.ecr.aws/r5b3e0r5/3box/ceramic-one:latest
+    environment:
+      - RUST_LOG=ERROR
+      - ceramic_kubo_rpc=DEBUG
+      - ceramic_one=DEBUG
+    ports:
+      - "5001:5001"
+    restart: always
