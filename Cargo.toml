@@ -13,6 +13,7 @@ dataverse-ceramic = { git = "https://github.com/dataverse-os/network-crates", br
 dataverse-core = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
 dataverse-file-system = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
 dataverse-iroh-store = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
+dataverse-pgsql-store = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
 directories = "5.0.1"
 env_logger = "0.10.0"
 futures = "0.3.29"
@@ -35,3 +36,8 @@ ceramic-event = { git = "https://github.com/dataverse-os/rust-ceramic", branch =
 
 [patch.'https://github.com/3box/ceramic-http-client-rs']
 ceramic-http-client = { git = "https://github.com/dataverse-os/ceramic-http-client-rs", branch = "patch-methods"}
+
+[[bin]]
+name = "dataverse-file-relayer"
+test = false
+bench = false

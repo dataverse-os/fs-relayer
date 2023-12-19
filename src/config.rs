@@ -14,14 +14,17 @@ pub struct Config {
 
     pub queue_dsn: String,
     pub queue_pool: u32,
+    pub queue_worker: u32,
 
     pub cache_size: usize,
     pub index_models: IndexModels,
     pub ceramic: String,
+
+    pub pgsql_dsn: Option<String>,
     pub iroh: IrohConfig,
 }
 
-#[derive(serde::Deserialize, serde::Serialize, Default)]
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize, Default)]
 pub struct IrohConfig {
     pub key: String,
     author: String,

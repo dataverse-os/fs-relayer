@@ -3,17 +3,23 @@ mod response;
 mod state;
 
 use crate::{config::Config, response::JsonResponse};
-use state::*;
-use tokio::sync::Mutex;
 
+use std::net::SocketAddrV4;
 use std::{str::FromStr, sync::Arc};
 
 use actix_web::{get, post, put};
 use actix_web::{http::header, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use dataverse_ceramic::kubo::message::MessageSubscriber;
-use dataverse_ceramic::{commit, kubo, StreamId};
-use futures::future::join_all;
+use dataverse_ceramic::network::Network;
+use dataverse_ceramic::{commit, kubo, StreamId, StreamOperator};
+use dataverse_core::stream::StreamStore;
+use dataverse_file_system::file::StreamFileLoader;
+use dataverse_file_system::task as fs_task;
+use futures::future;
 use serde::Deserialize;
+use state::*;
+use tokio::sync::Mutex;
+use tokio::task::JoinHandle;
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[derive(Deserialize)]
@@ -154,44 +160,126 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let cfg = Config::load()?;
+    let mut futures: Vec<JoinHandle<anyhow::Result<()>>> = Vec::new();
 
-    let kubo_client = kubo::new(&cfg.kubo_path);
-    let kubo_client = Arc::new(kubo_client);
-    let kubo_client_clone = kubo_client.clone();
-    kubo::task::init_kubo(&cfg.kubo_path);
+    // setup task queue
+    let queue = task_queue(&cfg).await?;
 
-    let mut joinable = Vec::new();
-    let queue = dataverse_file_system::task::new_queue(&cfg.queue_dsn, cfg.queue_pool).await?;
-    let mut pool = dataverse_file_system::task::build_pool(queue.clone(), 1);
-    joinable.push(tokio::spawn(async move {
-        tracing::info!("start queue");
-        pool.start().await;
-    }));
-    let queue = Arc::new(Mutex::new(queue));
+    // setup kubo operator
+    let (kubo_client, operator) = kubo_operator(&cfg, queue).await?;
 
-    let operator = Arc::new(kubo::Cached::new(kubo_client, queue, cfg.cache_size)?);
-    let data_path = cfg.data_path()?;
-    let key = dataverse_iroh_store::SecretKey::from_str(&cfg.iroh.key)?;
-    let iroh_store =
-        dataverse_iroh_store::Client::new(data_path, key, cfg.iroh.into(), operator).await?;
-    let iroh_store = Arc::new(iroh_store);
+    // setup file system store
+    let (kubo_store, operator, stream_store) = init_store(&cfg, operator).await?;
+    // let iroh_store = iroh_store(&cfg, operator).await?;
 
+    // setup network subscription
     for network in cfg.networks {
-        let iroh_store = iroh_store.clone();
-        let kubo_client_clone = kubo_client_clone.clone();
-        let sub = tokio::task::spawn(async move {
-            tracing::info!(?network, "subscribe to kubo topic");
-            if let Err(err) = kubo_client_clone.subscribe(iroh_store, network).await {
-                tracing::error!(?network, "subscribe error: {}", err);
-            };
-        });
-        joinable.push(sub);
+        futures.push(network_subscribe(
+            network,
+            kubo_store.clone(),
+            kubo_client.clone(),
+        ));
     }
 
-    let state = AppState::new(iroh_store);
-    let addrs = ("0.0.0.0", 8080);
+    // setup web server
+    let state = AppState::new(operator, stream_store);
+    let addr = "0.0.0.0:8080";
+    futures.push(web_server(state, addr.parse()?)?);
+    let futures: Vec<_> = futures.into_iter().map(Box::pin).collect();
 
-    let web = HttpServer::new(move || {
+    if let (Err(err), idx, remaining) = future::select_all(futures).await {
+        tracing::error!("error in {}: {}", idx, err);
+        for future in remaining {
+            future.abort();
+        }
+        anyhow::bail!("error: {}", err);
+    }
+
+    Ok(())
+}
+
+async fn task_queue(cfg: &Config) -> anyhow::Result<fs_task::Queue> {
+    // init kubo client for kubo task queue
+    kubo::task::init_kubo(&cfg.kubo_path);
+    let queue: fs_task::Queue = fs_task::new_queue(&cfg.queue_dsn, cfg.queue_pool).await?;
+    let mut pool = fs_task::build_pool(queue.clone(), cfg.queue_worker);
+    tracing::info!("start queue");
+    pool.start().await;
+    return Ok(queue);
+}
+
+async fn init_store(
+    cfg: &Config,
+    operator: Arc<dyn StreamOperator>,
+) -> anyhow::Result<(
+    Arc<dyn kubo::Store>,
+    Arc<dyn StreamFileLoader>,
+    Arc<dyn StreamStore>,
+)> {
+    match cfg.pgsql_dsn.is_some() {
+        true => {
+            let pgsql_store = pgsql_store(cfg, operator).await?;
+            Ok((pgsql_store.clone(), pgsql_store.clone(), pgsql_store))
+        }
+        false => {
+            let iroh_store = iroh_store(cfg, operator).await?;
+            Ok((iroh_store.clone(), iroh_store.clone(), iroh_store))
+        }
+    }
+}
+
+async fn pgsql_store(
+    cfg: &Config,
+    operator: Arc<dyn StreamOperator>,
+) -> anyhow::Result<Arc<dataverse_pgsql_store::Client>> {
+    if let Some(dsn) = &cfg.pgsql_dsn {
+        let iroh_store = dataverse_pgsql_store::Client::new(operator, dsn)?;
+        return Ok(Arc::new(iroh_store));
+    }
+    anyhow::bail!("pgsql_dsn is not set");
+}
+
+async fn iroh_store(
+    cfg: &Config,
+    operator: Arc<dyn StreamOperator>,
+) -> anyhow::Result<Arc<dataverse_iroh_store::Client>> {
+    let data_path = cfg.data_path()?;
+    let key = dataverse_iroh_store::SecretKey::from_str(&cfg.iroh.key)?;
+    let key_set = cfg.iroh.clone().into();
+    let iroh_store = dataverse_iroh_store::Client::new(data_path, key, key_set, operator).await?;
+    Ok(Arc::new(iroh_store))
+}
+
+async fn kubo_operator(
+    cfg: &Config,
+    queue: fs_task::Queue,
+) -> anyhow::Result<(Arc<kubo::Client>, Arc<dyn StreamOperator>)> {
+    let kubo: Arc<kubo::Client> = Arc::new(kubo::new(&cfg.kubo_path));
+    let queue = Arc::new(Mutex::new(queue));
+
+    let operator: Arc<dyn StreamOperator> =
+        Arc::new(kubo::Cached::new(kubo.clone(), queue, cfg.cache_size)?);
+    Ok((kubo, operator))
+}
+
+fn network_subscribe(
+    network: Network,
+    store: Arc<dyn kubo::Store>,
+    kubo: Arc<kubo::Client>,
+) -> JoinHandleWithError {
+    tokio::spawn(async move {
+        tracing::info!(?network, "subscribe to kubo topic");
+        if let Err(err) = kubo.subscribe(store, network).await {
+            tracing::error!(?network, "subscribe error: {}", err);
+            anyhow::bail!("subscribe error: {}", err);
+        };
+        Ok(())
+    })
+}
+
+fn web_server(state: AppState, addr: SocketAddrV4) -> anyhow::Result<JoinHandleWithError> {
+    tracing::info!("start server on {}", addr);
+    let server = HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())
             .app_data(web::Data::new(state.clone()))
@@ -200,16 +288,17 @@ async fn main() -> anyhow::Result<()> {
             .service(post_create_stream)
             .service(put_update_stream)
     })
-    .bind(addrs)?
+    .bind(addr)?
     .run();
-    joinable.push(tokio::spawn(async {
-        if let Err(err) = web.await {
+
+    let web = tokio::spawn(async {
+        if let Err(err) = server.await {
             tracing::error!("server error: {}", err);
+            anyhow::bail!("server error: {}", err);
         };
-    }));
-    tracing::info!("start server on {}:{}", addrs.0, addrs.1);
-
-    join_all(joinable).await;
-
-    Ok(())
+        Ok(())
+    });
+    return Ok(web);
 }
+
+type JoinHandleWithError = JoinHandle<anyhow::Result<()>>;

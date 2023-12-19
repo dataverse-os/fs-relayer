@@ -1,10 +1,11 @@
 use std::sync::Arc;
 
 use dataverse_ceramic::{commit, event::Event, StreamId, StreamState};
+use dataverse_core::stream::StreamStore;
 use dataverse_file_system::{
     file,
-    file::StreamFileTrait,
     file::{StreamEventSaver, StreamFile},
+    file::{StreamFileLoader, StreamFileTrait},
 };
 use serde::{Deserialize, Serialize};
 
@@ -14,8 +15,8 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn new(iroh_store: Arc<dataverse_iroh_store::Client>) -> Self {
-        let data = file::Client::new(iroh_store.clone(), iroh_store);
+    pub fn new(operator: Arc<dyn StreamFileLoader>, stream_store: Arc<dyn StreamStore>) -> Self {
+        let data = file::Client::new(operator, stream_store);
         Self {
             file_client: Arc::new(data),
         }
