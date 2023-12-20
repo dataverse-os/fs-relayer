@@ -165,7 +165,7 @@ dependencies = [
  "serde_urlencoded",
  "smallvec",
  "socket2 0.5.5",
- "time 0.3.30",
+ "time 0.3.31",
  "url",
 ]
 
@@ -376,7 +376,7 @@ dependencies = [
  "num-traits",
  "rusticata-macros",
  "thiserror",
- "time 0.3.30",
+ "time 0.3.31",
 ]
 
 [[package]]
@@ -430,7 +430,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1ca33f4bc4ed1babef42cad36cc1f51fa88be00420404e5b1e80ab1b18f7678c"
 dependencies = [
  "concurrent-queue",
- "event-listener 4.0.0",
+ "event-listener 4.0.1",
  "event-listener-strategy",
  "futures-core",
  "pin-project-lite",
@@ -519,7 +519,7 @@ version = "3.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7125e42787d53db9dd54261812ef17e937c95a51e4d291373b670342fa44310c"
 dependencies = [
- "event-listener 4.0.0",
+ "event-listener 4.0.1",
  "event-listener-strategy",
  "pin-project-lite",
 ]
@@ -1053,7 +1053,7 @@ dependencies = [
  "serde_with 2.3.3",
  "siwe",
  "thiserror",
- "time 0.3.30",
+ "time 0.3.31",
  "url",
 ]
 
@@ -1488,7 +1488,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e859cd57d0710d9e06c381b550c06e76992472a8c6d527aecd2fc673dcc231fb"
 dependencies = [
  "percent-encoding 2.3.1",
- "time 0.3.30",
+ "time 0.3.31",
  "version_check 0.9.4",
 ]
 
@@ -1722,7 +1722,7 @@ dependencies = [
 [[package]]
 name = "dapp-table-client"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#26c211bc3c5f630129167aafb1b09fabd56cb69c"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#c7ce574f0f62275254343428a41a130b0a3651cc"
 dependencies = [
  "anyhow",
  "graphql_client",
@@ -1879,7 +1879,7 @@ dependencies = [
 [[package]]
 name = "dataverse-ceramic"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#26c211bc3c5f630129167aafb1b09fabd56cb69c"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#c7ce574f0f62275254343428a41a130b0a3651cc"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1906,7 +1906,6 @@ dependencies = [
  "multibase 0.9.1",
  "once_cell",
  "primitive-types 0.12.2",
- "reqwest",
  "serde",
  "serde_json",
  "serde_repr",
@@ -1923,27 +1922,20 @@ dependencies = [
 [[package]]
 name = "dataverse-core"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#26c211bc3c5f630129167aafb1b09fabd56cb69c"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#c7ce574f0f62275254343428a41a130b0a3651cc"
 dependencies = [
  "anyhow",
  "async-trait",
  "ceramic-core",
- "ceramic-http-client",
- "chrono",
  "dapp-table-client",
  "dataverse-ceramic",
  "fang",
- "hex",
  "int-enum",
  "log 0.4.20",
- "multibase 0.9.1",
  "once_cell",
  "serde",
  "serde_json",
- "ssi",
  "tokio",
- "unsigned-varint",
- "url",
  "uuid 1.6.1",
 ]
 
@@ -1976,19 +1968,15 @@ dependencies = [
 [[package]]
 name = "dataverse-file-system"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#26c211bc3c5f630129167aafb1b09fabd56cb69c"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#c7ce574f0f62275254343428a41a130b0a3651cc"
 dependencies = [
  "anyhow",
- "async-channel 2.1.1",
  "async-std",
  "async-trait",
  "base64 0.21.5",
  "ceramic-core",
- "ceramic-event",
  "ceramic-http-client",
  "chrono",
- "dag-jose",
- "dapp-table-client",
  "dataverse-ceramic",
  "dataverse-core",
  "diesel",
@@ -1996,48 +1984,29 @@ dependencies = [
  "int-enum",
  "json-patch",
  "log 0.4.20",
- "multibase 0.9.1",
- "reqwest",
  "serde",
  "serde_json",
- "tokio",
  "tracing",
- "url",
  "uuid 1.6.1",
 ]
 
 [[package]]
 name = "dataverse-iroh-store"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#26c211bc3c5f630129167aafb1b09fabd56cb69c"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#c7ce574f0f62275254343428a41a130b0a3651cc"
 dependencies = [
  "anyhow",
  "async-trait",
- "bytes 1.5.0",
  "ceramic-core",
- "ceramic-kubo-rpc-server",
- "chrono",
  "dataverse-ceramic",
  "dataverse-core",
  "dataverse-file-system",
- "ed25519-dalek",
  "futures",
- "hex",
- "int-enum",
  "iroh",
  "iroh-bytes",
- "iroh-net",
  "iroh-sync",
- "json-patch",
- "log 0.4.20",
  "num_cpus",
- "once_cell",
- "quic-rpc",
- "quinn",
- "rand 0.8.5",
- "serde",
  "serde_json",
- "swagger",
  "tempfile",
  "tokio",
  "tracing",
@@ -2047,7 +2016,7 @@ dependencies = [
 [[package]]
 name = "dataverse-pgsql-store"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#26c211bc3c5f630129167aafb1b09fabd56cb69c"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#c7ce574f0f62275254343428a41a130b0a3651cc"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2842,9 +2811,9 @@ checksum = "0206175f82b8d6bf6652ff7d71a1e27fd2e4efde587fd368662814d6ec1d9ce0"
 
 [[package]]
 name = "event-listener"
-version = "4.0.0"
+version = "4.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "770d968249b5d99410d61f5bf89057f3199a077a04d087092f58e7d10692baae"
+checksum = "84f2cdcf274580f2d63697192d744727b3198894b1bf02923643bf59e2c26712"
 dependencies = [
  "concurrent-queue",
  "parking",
@@ -2857,7 +2826,7 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "958e4d70b6d5e81971bebec42271ec641e7ff4e170a6fa605f2b8a8b65cb97d3"
 dependencies = [
- "event-listener 4.0.0",
+ "event-listener 4.0.1",
  "pin-project-lite",
 ]
 
@@ -4000,7 +3969,7 @@ dependencies = [
  "strum",
  "tempfile",
  "thiserror",
- "time 0.3.30",
+ "time 0.3.31",
  "tokio",
  "tokio-stream",
  "tokio-util",
@@ -4189,7 +4158,7 @@ dependencies = [
  "stun-rs",
  "surge-ping",
  "thiserror",
- "time 0.3.30",
+ "time 0.3.31",
  "tokio",
  "tokio-rustls",
  "tokio-rustls-acme",
@@ -4952,9 +4921,9 @@ dependencies = [
 
 [[package]]
 name = "mach2"
-version = "0.4.1"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d0d1830bcd151a6fc4aea1369af235b36c1528fe976b8ff678683c9995eade8"
+checksum = "19b955cdeb2a02b9117f121ce63aa52d08ade45de53e48fe6a38b39c10f6f709"
 dependencies = [
  "libc",
 ]
@@ -6706,7 +6675,7 @@ checksum = "52c4f3084aa3bc7dfbba4eff4fab2a54db4324965d8872ab933565e6fbd83bc6"
 dependencies = [
  "pem 3.0.3",
  "ring 0.16.20",
- "time 0.3.30",
+ "time 0.3.31",
  "yasna",
 ]
 
@@ -7498,9 +7467,9 @@ dependencies = [
 
 [[package]]
 name = "serde_spanned"
-version = "0.6.4"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12022b835073e5b11e90a14f86838ceb1c8fb0325b72416845c487ac0fa95e80"
+checksum = "eb3622f419d1296904700073ea6cc23ad690adbd66f13ea683df73298736f0c1"
 dependencies = [
  "serde",
 ]
@@ -7541,7 +7510,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_with_macros 2.3.3",
- "time 0.3.30",
+ "time 0.3.31",
 ]
 
 [[package]]
@@ -7725,7 +7694,7 @@ dependencies = [
  "num-bigint",
  "num-traits",
  "thiserror",
- "time 0.3.30",
+ "time 0.3.31",
 ]
 
 [[package]]
@@ -7753,7 +7722,7 @@ dependencies = [
  "rand 0.8.5",
  "sha3",
  "thiserror",
- "time 0.3.30",
+ "time 0.3.31",
 ]
 
 [[package]]
@@ -8528,9 +8497,9 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.3.30"
+version = "0.3.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c4a34ab300f2dee6e562c10a046fc05e358b29f9bf92277f30c3c8d82275f6f5"
+checksum = "f657ba42c3f86e7680e53c8cd3af8abbe56b5491790b46e22e19c0d57463583e"
 dependencies = [
  "deranged",
  "itoa",
@@ -8548,9 +8517,9 @@ checksum = "ef927ca75afb808a4d64dd374f00a2adf8d0fcff8e7b184af886c3c87ec4a3f3"
 
 [[package]]
 name = "time-macros"
-version = "0.2.15"
+version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ad70d68dba9e1f8aceda7aa6711965dfec1cac869f311a51bd08b3a2ccbce20"
+checksum = "26197e33420244aeb70c3e8c78376ca46571bc4e701e4791c2cd9f57dcb3a43f"
 dependencies = [
  "time-core",
 ]
@@ -8581,9 +8550,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.35.0"
+version = "1.35.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "841d45b238a16291a4e1584e61820b8ae57d696cc5015c459c229ccc6990cc1c"
+checksum = "c89b4efa943be685f629b149f53829423f8f5531ea21249408e8e2f8671ec104"
 dependencies = [
  "backtrace",
  "bytes 1.5.0",
@@ -9738,7 +9707,7 @@ dependencies = [
  "oid-registry",
  "rusticata-macros",
  "thiserror",
- "time 0.3.30",
+ "time 0.3.31",
 ]
 
 [[package]]
@@ -9762,7 +9731,7 @@ version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e17bb3549cc1321ae1296b9cdc2698e2b6cb1992adfa19a8c72e5b7a738f44cd"
 dependencies = [
- "time 0.3.30",
+ "time 0.3.31",
 ]
 
 [[package]]

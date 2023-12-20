@@ -203,7 +203,7 @@ async fn task_queue(cfg: &Config) -> anyhow::Result<fs_task::Queue> {
     kubo::task::init_kubo(&cfg.kubo_path);
     let queue: fs_task::Queue = fs_task::new_queue(&cfg.queue_dsn, cfg.queue_pool).await?;
     let mut pool = fs_task::build_pool(queue.clone(), cfg.queue_worker);
-    tracing::info!("start queue");
+    tracing::info!("starting queue");
     pool.start().await;
     return Ok(queue);
 }
