@@ -5,8 +5,8 @@ RUN apt update && apt install -y protobuf-compiler libclang-dev
 COPY . /build
 WORKDIR /build
 
-ENV RUSTC_WRAPPER=sccache
-ENV SCCACHE_BUCKET=ci-sccache-bucket
+# ENV RUSTC_WRAPPER=sccache
+# ENV SCCACHE_BUCKET=ci-sccache-bucket
 
 RUN cargo build --release --no-default-features -p dataverse-file-relayer
 
