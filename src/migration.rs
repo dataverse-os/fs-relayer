@@ -1,7 +1,8 @@
 use std::sync::Arc;
 
+use anyhow::Context;
 use dataverse_ceramic::StreamOperator;
-use dataverse_core::stream::StreamStore;
+use dataverse_core::{store::dapp, stream::StreamStore};
 
 use crate::{config::Config, iroh_store, pgsql_store};
 
@@ -10,18 +11,33 @@ pub async fn migration(cfg: &Config, operator: Arc<dyn StreamOperator>) -> anyho
     let split: Vec<_> = migration.split(",").collect();
     if split.iter().any(|&s| s == "stream_store") {
         let pgsql_store = pgsql_store(cfg, operator.clone()).await?;
-        let iroh_store = iroh_store(cfg, operator).await?;
-        migration_stream_store(iroh_store, pgsql_store).await?;
+        let iroh_store = iroh_store(cfg, operator.clone()).await?;
+        migration_stream_store(operator, iroh_store, pgsql_store).await?;
     }
     Ok(())
 }
 
 async fn migration_stream_store(
-    from: Arc<dataverse_iroh_store::Client>,
-    to: Arc<dataverse_pgsql_store::Client>,
+    operator: Arc<dyn StreamOperator>,
+    from: Arc<dyn StreamStore>,
+    to: Arc<dyn StreamStore>,
 ) -> anyhow::Result<()> {
     let streams = from.list_all_streams().await?;
-    for stream in streams {
+    for mut stream in streams {
+        let stream_id = stream.stream_id()?;
+        let ceramic = dapp::get_dapp_ceramic(&stream.dapp_id).await?;
+        let state = operator
+            .load_stream_state(&ceramic, &stream_id, Some(stream.tip))
+            .await?;
+        stream.account = Some(
+            state
+                .controllers()
+                .first()
+                .context("no controllers")?
+                .clone(),
+        );
+        stream.model = state.model()?;
+        stream.content = state.content;
         to.save_stream(&stream).await?;
     }
     Ok(())
