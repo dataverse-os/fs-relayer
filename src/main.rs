@@ -1,8 +1,10 @@
 mod config;
+mod migration;
 mod response;
 mod state;
 
 use crate::{config::Config, response::JsonResponse};
+use migration::migration;
 
 use std::net::SocketAddrV4;
 use std::{str::FromStr, sync::Arc};
@@ -167,6 +169,9 @@ async fn main() -> anyhow::Result<()> {
 
     // setup kubo operator
     let (kubo_client, operator) = kubo_operator(&cfg, queue).await?;
+
+    // running migration
+    migration(&cfg, operator.clone()).await?;
 
     // setup file system store
     let (kubo_store, operator, stream_store) = init_store(&cfg, operator).await?;
