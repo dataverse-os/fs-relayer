@@ -4,6 +4,7 @@ mod response;
 mod state;
 
 use crate::{config::Config, response::JsonResponse};
+use anyhow::Context;
 use migration::migration;
 
 use std::net::SocketAddrV4;
@@ -76,8 +77,11 @@ async fn load_stream(
 
 #[derive(Deserialize)]
 struct LoadFilesQuery {
-    model_id: StreamId,
     account: Option<String>,
+    model_id: Option<StreamId>,
+
+    stream_ids: Option<String>,
+    dapp_id: Option<uuid::Uuid>,
 }
 
 #[get("/dataverse/streams")]
@@ -85,24 +89,74 @@ async fn load_streams(
     query: web::Query<LoadFilesQuery>,
     state: web::Data<AppState>,
 ) -> impl Responder {
-    match state
-        .load_files(query.account.clone(), &query.model_id)
-        .await
-    {
+    if let Some(model_id) = &query.model_id {
+        return load_streams_by_model_id(state, model_id.clone(), query.account.clone()).await;
+    }
+
+    if let (Some(stream_ids_str), Some(dapp_id)) = (&query.stream_ids, &query.dapp_id) {
+        let mut stream_ids = Vec::new();
+        for stream_id_str in stream_ids_str.split(",") {
+            let stream_id = match StreamId::from_str(stream_id_str).context("invalid stream id") {
+                Ok(stream_id) => stream_id,
+                Err(err) => {
+                    return HttpResponse::BadRequest().json_error(err.to_string());
+                }
+            };
+            stream_ids.push(stream_id);
+        }
+        return load_streams_by_stream_ids(state, stream_ids.clone(), dapp_id.clone()).await;
+    }
+
+    return HttpResponse::BadRequest().json_error("invalid query".to_string());
+}
+
+async fn load_streams_by_model_id(
+    state: web::Data<AppState>,
+    model_id: StreamId,
+    account: Option<String>,
+) -> HttpResponse {
+    match state.load_files(account.clone(), &model_id).await {
         Ok(file) => HttpResponse::Ok()
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
             .json(file),
         Err(err) => {
             tracing::warn!(
-                model_id = query.model_id.to_string(),
-                account = query.account.clone(),
+                model_id = model_id.to_string(),
+                account = account.clone(),
                 "load streams error: {}",
                 err
             );
             HttpResponse::BadRequest().json_error(err.to_string())
         }
     }
+}
+
+async fn load_streams_by_stream_ids(
+    state: web::Data<AppState>,
+    stream_ids: Vec<StreamId>,
+    dapp_id: uuid::Uuid,
+) -> HttpResponse {
+    let mut files = Vec::new();
+
+    for stream_id in stream_ids {
+        match state.load_file(&dapp_id, &stream_id).await {
+            Ok(file) => files.push(file),
+            Err(err) => {
+                tracing::warn!(
+                    stream_id = stream_id.to_string(),
+                    dapp_id = dapp_id.to_string(),
+                    "load stream error: {}",
+                    err
+                );
+                return HttpResponse::BadRequest().json_error(err.to_string());
+            }
+        }
+    }
+    HttpResponse::Ok()
+        .insert_header(header::ContentType::json())
+        .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
+        .json(files)
 }
 
 #[derive(Deserialize)]
@@ -274,11 +328,9 @@ fn network_subscribe(
 ) -> JoinHandleWithError {
     tokio::spawn(async move {
         tracing::info!(?network, "subscribe to kubo topic");
-        if let Err(err) = kubo.subscribe(store, network).await {
-            tracing::error!(?network, "subscribe error: {}", err);
-            anyhow::bail!("subscribe error: {}", err);
-        };
-        Ok(())
+        kubo.subscribe(store, network)
+            .await
+            .context("subscribe error")
     })
 }
 
@@ -296,13 +348,7 @@ fn web_server(state: AppState, addr: SocketAddrV4) -> anyhow::Result<JoinHandleW
     .bind(addr)?
     .run();
 
-    let web = tokio::spawn(async {
-        if let Err(err) = server.await {
-            tracing::error!("server error: {}", err);
-            anyhow::bail!("server error: {}", err);
-        };
-        Ok(())
-    });
+    let web = tokio::spawn(async { server.await.context("server error") });
     return Ok(web);
 }
 
