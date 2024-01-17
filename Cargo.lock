@@ -1719,7 +1719,7 @@ dependencies = [
 [[package]]
 name = "dapp-table-client"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#5ff53707bb9f3c8f8ef2f10c11b424219fd3d690"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#ae39d01c875a0eba49886eb537ca582d54c33647"
 dependencies = [
  "anyhow",
  "graphql_client",
@@ -1876,7 +1876,7 @@ dependencies = [
 [[package]]
 name = "dataverse-ceramic"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#5ff53707bb9f3c8f8ef2f10c11b424219fd3d690"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#ae39d01c875a0eba49886eb537ca582d54c33647"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1902,7 +1902,7 @@ dependencies = [
  "lru",
  "multibase 0.9.1",
  "once_cell",
- "postgres-native-tls",
+ "postgres-openssl",
  "primitive-types 0.12.2",
  "serde",
  "serde_json",
@@ -1920,7 +1920,7 @@ dependencies = [
 [[package]]
 name = "dataverse-core"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#5ff53707bb9f3c8f8ef2f10c11b424219fd3d690"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#ae39d01c875a0eba49886eb537ca582d54c33647"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1967,7 +1967,7 @@ dependencies = [
 [[package]]
 name = "dataverse-file-system"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#5ff53707bb9f3c8f8ef2f10c11b424219fd3d690"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#ae39d01c875a0eba49886eb537ca582d54c33647"
 dependencies = [
  "anyhow",
  "async-std",
@@ -1983,8 +1983,8 @@ dependencies = [
  "int-enum",
  "json-patch",
  "log 0.4.20",
- "native-tls",
- "postgres-native-tls",
+ "openssl",
+ "postgres-openssl",
  "serde",
  "serde_json",
  "tracing",
@@ -1994,7 +1994,7 @@ dependencies = [
 [[package]]
 name = "dataverse-iroh-store"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#5ff53707bb9f3c8f8ef2f10c11b424219fd3d690"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#ae39d01c875a0eba49886eb537ca582d54c33647"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2017,7 +2017,7 @@ dependencies = [
 [[package]]
 name = "dataverse-pgsql-store"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#5ff53707bb9f3c8f8ef2f10c11b424219fd3d690"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#ae39d01c875a0eba49886eb537ca582d54c33647"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -6098,15 +6098,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "postgres-native-tls"
+name = "postgres-openssl"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d442770e2b1e244bb5eb03b31c79b65bb2568f413b899eaba850fa945a65954"
+checksum = "1de0ea6504e07ca78355a6fb88ad0f36cafe9e696cbc6717f16a207f3a60be72"
 dependencies = [
  "futures",
- "native-tls",
+ "openssl",
  "tokio",
- "tokio-native-tls",
+ "tokio-openssl",
  "tokio-postgres",
 ]
 
