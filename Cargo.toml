@@ -14,6 +14,7 @@ dataverse-core = { git = "https://github.com/dataverse-os/network-crates", branc
 dataverse-file-system = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
 dataverse-iroh-store = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
 dataverse-pgsql-store = { git = "https://github.com/dataverse-os/network-crates", branch = "main"}
+derive_more = "0.99.17"
 directories = "5.0.1"
 env_logger = "0.10.0"
 futures = "0.3.29"
