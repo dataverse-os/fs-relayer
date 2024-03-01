@@ -2,10 +2,8 @@ use std::sync::Arc;
 
 use dataverse_ceramic::{commit, event::Event, StreamId, StreamState};
 use dataverse_core::stream::StreamStore;
-use dataverse_file_system::{
-    file,
-    file::{StreamEventSaver, StreamFile},
-    file::{StreamFileLoader, StreamFileTrait},
+use dataverse_file_system::file::{
+    self, LoadFilesOption, StreamEventSaver, StreamFile, StreamFileLoader, StreamFileTrait,
 };
 use serde::{Deserialize, Serialize};
 
@@ -72,8 +70,11 @@ impl AppState {
         &self,
         account: Option<String>,
         model_id: &StreamId,
+        options: Vec<LoadFilesOption>,
     ) -> anyhow::Result<Vec<StreamFile>> {
-        self.file_client.load_files(account, &model_id).await
+        self.file_client
+            .load_files(account, &model_id, options)
+            .await
     }
 }
 

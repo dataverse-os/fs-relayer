@@ -6,6 +6,7 @@ mod state;
 use crate::{config::Config, response::JsonResponse};
 use anyhow::Context;
 use migration::migration;
+use serde_json::Value;
 
 use std::net::SocketAddrV4;
 use std::{str::FromStr, sync::Arc};
@@ -16,7 +17,7 @@ use dataverse_ceramic::kubo::message::MessageSubscriber;
 use dataverse_ceramic::network::Network;
 use dataverse_ceramic::{commit, kubo, StreamId, StreamOperator};
 use dataverse_core::stream::StreamStore;
-use dataverse_file_system::file::StreamFileLoader;
+use dataverse_file_system::file::{LoadFilesOption, StreamFileLoader};
 use dataverse_file_system::task as fs_task;
 use futures::future;
 use serde::Deserialize;
@@ -84,13 +85,25 @@ struct LoadFilesQuery {
     dapp_id: Option<uuid::Uuid>,
 }
 
+#[derive(Deserialize)]
+struct LoadFilesPayload {
+    signals: Vec<Value>,
+}
+
 #[get("/dataverse/streams")]
 async fn load_streams(
     query: web::Query<LoadFilesQuery>,
+    payload: web::Json<LoadFilesPayload>,
     state: web::Data<AppState>,
 ) -> impl Responder {
     if let Some(model_id) = &query.model_id {
-        return load_streams_by_model_id(state, model_id.clone(), query.account.clone()).await;
+        return load_streams_by_model_id(
+            state,
+            model_id.clone(),
+            query.account.clone(),
+            payload.signals.clone(),
+        )
+        .await;
     }
 
     if let (Some(stream_ids_str), Some(dapp_id)) = (&query.stream_ids, &query.dapp_id) {
@@ -114,8 +127,13 @@ async fn load_streams_by_model_id(
     state: web::Data<AppState>,
     model_id: StreamId,
     account: Option<String>,
+    signals: Vec<Value>,
 ) -> HttpResponse {
-    match state.load_files(account.clone(), &model_id).await {
+    let mut opts = vec![];
+    for ele in signals {
+        opts.push(LoadFilesOption::Signal(ele))
+    }
+    match state.load_files(account.clone(), &model_id, opts).await {
         Ok(file) => HttpResponse::Ok()
             .insert_header(header::ContentType::json())
             .insert_header((header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"))
