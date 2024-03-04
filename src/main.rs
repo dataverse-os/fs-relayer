@@ -5,6 +5,7 @@ mod state;
 
 use crate::{config::Config, response::JsonResponse};
 use anyhow::Context;
+use dataverse_core::store::dapp::get_model_by_name;
 use migration::migration;
 use serde_json::Value;
 
@@ -92,10 +93,20 @@ struct LoadFilesPayload {
 
 #[route("/dataverse/streams", method = "GET", method = "POST")]
 async fn load_streams(
-    query: web::Query<LoadFilesQuery>,
+    mut query: web::Query<LoadFilesQuery>,
     payload: web::Json<LoadFilesPayload>,
     state: web::Data<AppState>,
 ) -> impl Responder {
+    // if signals is not empty and dapp_id is not empty, then override model_id
+    if !payload.signals.is_empty() {
+        if let Some(dapp_id) = &query.dapp_id {
+            match get_model_by_name(dapp_id, "indexFolder").await {
+                Ok(model) => query.model_id = Some(model.id),
+                Err(err) => return HttpResponse::BadRequest().json_error(err.to_string()),
+            };
+        }
+    }
+
     if let Some(model_id) = &query.model_id {
         return load_streams_by_model_id(
             state,
@@ -109,13 +120,10 @@ async fn load_streams(
     if let (Some(stream_ids_str), Some(dapp_id)) = (&query.stream_ids, &query.dapp_id) {
         let mut stream_ids = Vec::new();
         for stream_id_str in stream_ids_str.split(",") {
-            let stream_id = match StreamId::from_str(stream_id_str).context("invalid stream id") {
-                Ok(stream_id) => stream_id,
-                Err(err) => {
-                    return HttpResponse::BadRequest().json_error(err.to_string());
-                }
+            match StreamId::from_str(stream_id_str).context("invalid stream id") {
+                Ok(stream_id) => stream_ids.push(stream_id),
+                Err(err) => return HttpResponse::BadRequest().json_error(err.to_string()),
             };
-            stream_ids.push(stream_id);
         }
         return load_streams_by_stream_ids(state, stream_ids.clone(), dapp_id.clone()).await;
     }
