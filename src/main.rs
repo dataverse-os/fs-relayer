@@ -131,7 +131,7 @@ async fn post_load_streams(
     return HttpResponse::BadRequest().json_error("invalid query".to_string());
 }
 
-#[post("/dataverse/streams")]
+#[get("/dataverse/streams")]
 async fn get_load_streams(
     query: web::Query<LoadFilesQuery>,
     state: web::Data<AppState>,
