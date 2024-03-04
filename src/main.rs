@@ -12,7 +12,7 @@ use serde_json::Value;
 use std::net::SocketAddrV4;
 use std::{str::FromStr, sync::Arc};
 
-use actix_web::{get, post, put, route};
+use actix_web::{get, post, put};
 use actix_web::{http::header, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use dataverse_ceramic::kubo::message::MessageSubscriber;
 use dataverse_ceramic::network::Network;
@@ -91,8 +91,8 @@ struct LoadFilesPayload {
     signals: Vec<Value>,
 }
 
-#[route("/dataverse/streams", method = "GET", method = "POST")]
-async fn load_streams(
+#[post("/dataverse/streams")]
+async fn post_load_streams(
     mut query: web::Query<LoadFilesQuery>,
     payload: web::Json<LoadFilesPayload>,
     state: web::Data<AppState>,
@@ -115,6 +115,30 @@ async fn load_streams(
             payload.signals.clone(),
         )
         .await;
+    }
+
+    if let (Some(stream_ids_str), Some(dapp_id)) = (&query.stream_ids, &query.dapp_id) {
+        let mut stream_ids = Vec::new();
+        for stream_id_str in stream_ids_str.split(",") {
+            match StreamId::from_str(stream_id_str).context("invalid stream id") {
+                Ok(stream_id) => stream_ids.push(stream_id),
+                Err(err) => return HttpResponse::BadRequest().json_error(err.to_string()),
+            };
+        }
+        return load_streams_by_stream_ids(state, stream_ids.clone(), dapp_id.clone()).await;
+    }
+
+    return HttpResponse::BadRequest().json_error("invalid query".to_string());
+}
+
+#[post("/dataverse/streams")]
+async fn get_load_streams(
+    query: web::Query<LoadFilesQuery>,
+    state: web::Data<AppState>,
+) -> impl Responder {
+    if let Some(model_id) = &query.model_id {
+        return load_streams_by_model_id(state, model_id.clone(), query.account.clone(), vec![])
+            .await;
     }
 
     if let (Some(stream_ids_str), Some(dapp_id)) = (&query.stream_ids, &query.dapp_id) {
@@ -367,7 +391,8 @@ fn web_server(state: AppState, addr: SocketAddrV4) -> anyhow::Result<JoinHandleW
             .wrap(Logger::default())
             .app_data(web::Data::new(state.clone()))
             .service(load_stream)
-            .service(load_streams)
+            .service(get_load_streams)
+            .service(post_load_streams)
             .service(post_create_stream)
             .service(put_update_stream)
     })
