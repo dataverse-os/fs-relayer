@@ -11,7 +11,7 @@ use serde_json::Value;
 use std::net::SocketAddrV4;
 use std::{str::FromStr, sync::Arc};
 
-use actix_web::{get, post, put};
+use actix_web::{get, post, put, route};
 use actix_web::{http::header, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use dataverse_ceramic::kubo::message::MessageSubscriber;
 use dataverse_ceramic::network::Network;
@@ -90,7 +90,7 @@ struct LoadFilesPayload {
     signals: Vec<Value>,
 }
 
-#[get("/dataverse/streams")]
+#[route("/dataverse/streams", method = "GET", method = "POST")]
 async fn load_streams(
     query: web::Query<LoadFilesQuery>,
     payload: web::Json<LoadFilesPayload>,
