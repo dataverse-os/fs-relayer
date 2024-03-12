@@ -40,7 +40,7 @@ dependencies = [
  "flate2",
  "futures-core",
  "h2",
- "http",
+ "http 0.2.12",
  "httparse",
  "httpdate",
  "itoa",
@@ -75,7 +75,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d22475596539443685426b6bdadb926ad0ecaefdfc5fb05e5e3441f15463c511"
 dependencies = [
  "bytestring",
- "http",
+ "http 0.2.12",
  "regex",
  "serde",
  "tracing",
@@ -602,7 +602,7 @@ version = "0.16.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fdb8867f378f33f78a811a8eb9bf108ad99430d7aad43315dd9319c827ef6247"
 dependencies = [
- "http",
+ "http 0.2.12",
  "log 0.4.21",
  "url",
  "wildmatch",
@@ -1045,7 +1045,7 @@ checksum = "92680fcbb8e24eaa4640c6deca0042db02da17c8b92fde62a0c517bcb6769d7d"
 dependencies = [
  "async-trait",
  "hex",
- "http",
+ "http 0.2.12",
  "iri-string",
  "libipld 0.14.0",
  "serde",
@@ -1148,7 +1148,7 @@ dependencies = [
  "async-trait",
  "chrono",
  "futures",
- "hyper",
+ "hyper 0.14.28",
  "hyper-openssl",
  "hyper-tls",
  "lazy_static",
@@ -1718,7 +1718,7 @@ dependencies = [
 [[package]]
 name = "dapp-table-client"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#410ff360a8ca62a7c1f06ce56a0f3d801ffa2c30"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#9758e7a692f179375d145c8703308c36d5321d12"
 dependencies = [
  "anyhow",
  "graphql_client",
@@ -1875,7 +1875,7 @@ dependencies = [
 [[package]]
 name = "dataverse-ceramic"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#410ff360a8ca62a7c1f06ce56a0f3d801ffa2c30"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#9758e7a692f179375d145c8703308c36d5321d12"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1919,7 +1919,7 @@ dependencies = [
 [[package]]
 name = "dataverse-core"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#410ff360a8ca62a7c1f06ce56a0f3d801ffa2c30"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#9758e7a692f179375d145c8703308c36d5321d12"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1966,7 +1966,7 @@ dependencies = [
 [[package]]
 name = "dataverse-file-system"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#410ff360a8ca62a7c1f06ce56a0f3d801ffa2c30"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#9758e7a692f179375d145c8703308c36d5321d12"
 dependencies = [
  "anyhow",
  "async-std",
@@ -1994,7 +1994,7 @@ dependencies = [
 [[package]]
 name = "dataverse-iroh-store"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#410ff360a8ca62a7c1f06ce56a0f3d801ffa2c30"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#9758e7a692f179375d145c8703308c36d5321d12"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2017,7 +2017,7 @@ dependencies = [
 [[package]]
 name = "dataverse-pgsql-store"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#410ff360a8ca62a7c1f06ce56a0f3d801ffa2c30"
+source = "git+https://github.com/dataverse-os/network-crates?branch=main#9758e7a692f179375d145c8703308c36d5321d12"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2785,7 +2785,7 @@ dependencies = [
  "futures-timer",
  "futures-util",
  "hashers",
- "http",
+ "http 0.2.12",
  "instant",
  "jsonwebtoken",
  "once_cell",
@@ -3405,7 +3405,7 @@ dependencies = [
  "futures-core",
  "futures-sink",
  "futures-util",
- "http",
+ "http 0.2.12",
  "indexmap 2.2.5",
  "slab",
  "tokio",
@@ -3454,6 +3454,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b2bca93b15ea5a746f220e56587f71e73c6165eab783df9e26590069953e3c30"
 dependencies = [
  "fxhash",
+]
+
+[[package]]
+name = "hashlink"
+version = "0.8.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e8094feaf31ff591f651a2664fb9cfd92bba7a60ce3197265e9482ebe753c8f7"
+dependencies = [
+ "hashbrown 0.14.3",
 ]
 
 [[package]]
@@ -3545,13 +3554,47 @@ dependencies = [
 ]
 
 [[package]]
+name = "http"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "21b9ddb458710bc376481b842f5da65cdf31522de232c1ca8146abce2a358258"
+dependencies = [
+ "bytes 1.5.0",
+ "fnv",
+ "itoa",
+]
+
+[[package]]
 name = "http-body"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ceab25649e9960c0311ea418d17bee82c0dcec1bd053b5f9a66e265a693bed2"
 dependencies = [
  "bytes 1.5.0",
- "http",
+ "http 0.2.12",
+ "pin-project-lite",
+]
+
+[[package]]
+name = "http-body"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1cac85db508abc24a2e48553ba12a996e87244a0395ce011e62b37158745d643"
+dependencies = [
+ "bytes 1.5.0",
+ "http 1.1.0",
+]
+
+[[package]]
+name = "http-body-util"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0475f8b2ac86659c21b64320d5d653f9efe42acd2a4e560073ec61a155a34f1d"
+dependencies = [
+ "bytes 1.5.0",
+ "futures-core",
+ "http 1.1.0",
+ "http-body 1.0.0",
  "pin-project-lite",
 ]
 
@@ -3603,8 +3646,8 @@ dependencies = [
  "futures-core",
  "futures-util",
  "h2",
- "http",
- "http-body",
+ "http 0.2.12",
+ "http-body 0.4.6",
  "httparse",
  "httpdate",
  "itoa",
@@ -3613,6 +3656,26 @@ dependencies = [
  "tokio",
  "tower-service",
  "tracing",
+ "want",
+]
+
+[[package]]
+name = "hyper"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "186548d73ac615b32a73aafe38fb4f56c0d340e110e5a200bcadbaf2e199263a"
+dependencies = [
+ "bytes 1.5.0",
+ "futures-channel",
+ "futures-util",
+ "http 1.1.0",
+ "http-body 1.0.0",
+ "httparse",
+ "httpdate",
+ "itoa",
+ "pin-project-lite",
+ "smallvec",
+ "tokio",
  "want",
 ]
 
@@ -3639,8 +3702,8 @@ version = "0.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6ee5d7a8f718585d1c3c61dfde28ef5b0bb14734b4db13f5ada856cdc6c612b"
 dependencies = [
- "http",
- "hyper",
+ "http 0.2.12",
+ "hyper 0.14.28",
  "linked_hash_set",
  "once_cell",
  "openssl",
@@ -3658,8 +3721,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec3efd23720e2049821a693cbc7e65ea87c72f1c58ff2f9522ff332b1491e590"
 dependencies = [
  "futures-util",
- "http",
- "hyper",
+ "http 0.2.12",
+ "hyper 0.14.28",
  "rustls",
  "tokio",
  "tokio-rustls",
@@ -3672,10 +3735,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6183ddfa99b85da61a140bea0efc93fdf56ceaa041b37d553518030827f9905"
 dependencies = [
  "bytes 1.5.0",
- "hyper",
+ "hyper 0.14.28",
  "native-tls",
  "tokio",
  "tokio-native-tls",
+]
+
+[[package]]
+name = "hyper-util"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca38ef113da30126bbff9cd1705f9273e15d45498615d138b0c20279ac7a76aa"
+dependencies = [
+ "bytes 1.5.0",
+ "futures-util",
+ "http 1.1.0",
+ "http-body 1.0.0",
+ "hyper 1.2.0",
+ "pin-project-lite",
+ "socket2 0.5.6",
+ "tokio",
 ]
 
 [[package]]
@@ -3736,8 +3815,8 @@ dependencies = [
  "attohttpc",
  "bytes 1.5.0",
  "futures",
- "http",
- "hyper",
+ "http 0.2.12",
+ "hyper 0.14.28",
  "log 0.4.21",
  "rand 0.8.5",
  "tokio",
@@ -3934,9 +4013,9 @@ dependencies = [
 
 [[package]]
 name = "iroh"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d22edfe996b975984f84516fb1989e0e71ac30231579e736c08855a8fec5302a"
+checksum = "d3aea70a8acc645bc78c388f9412b4ae5f94ddeeea13c946b29af4c2db097c23"
 dependencies = [
  "anyhow",
  "bao-tree",
@@ -3953,6 +4032,7 @@ dependencies = [
  "flume",
  "futures",
  "genawaiter",
+ "hashlink",
  "hex",
  "human-time",
  "indicatif",
@@ -3993,9 +4073,9 @@ dependencies = [
 
 [[package]]
 name = "iroh-base"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a3e6c2c1f49c416d9a7370de52ea73ddf64edd9c19015ef2afe69765698a8600"
+checksum = "e1b42ef43639a86a49132998f066810b702798818993e34565dd4eea835f626e"
 dependencies = [
  "anyhow",
  "bao-tree",
@@ -4023,9 +4103,9 @@ dependencies = [
 
 [[package]]
 name = "iroh-bytes"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "78802dde7687f32a3ffcc978f8528bb5a62e14818db828a2039a23de66708656"
+checksum = "38213865ec542f82fc4d8a9748b5cdae92da1707c134428e9f60b1cd46ccbe39"
 dependencies = [
  "anyhow",
  "bao-tree",
@@ -4059,9 +4139,9 @@ dependencies = [
 
 [[package]]
 name = "iroh-gossip"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2dddf21998d2fae45a77b3c180343ba25963f465e4bbbf0d631be1a5d8739506"
+checksum = "74fcad132a6ff61ad83fc63203948919d2d77d58deac806bd08580f11e968a24"
 dependencies = [
  "anyhow",
  "bytes 1.5.0",
@@ -4101,23 +4181,30 @@ dependencies = [
 
 [[package]]
 name = "iroh-metrics"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50e0ba8090deb98386000a5c3e93d4912e260edf26a30d0ef64831752a69709c"
+checksum = "92a3271df85ec2a18a358d36723039eeacb464d8764531c8fd9f822dac39410d"
 dependencies = [
+ "anyhow",
  "erased_set",
- "hyper",
+ "http-body-util",
+ "hyper 1.2.0",
+ "hyper-util",
  "once_cell",
  "prometheus-client",
+ "reqwest",
+ "serde",
  "struct_iterable",
+ "time 0.3.34",
+ "tokio",
  "tracing",
 ]
 
 [[package]]
 name = "iroh-net"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e8a50d291a5f5df5b7ebcdebcb183cde2f56f9d28892218493a321dcc7f30f3b"
+checksum = "0477847a7fe225f71fbdff7b0baccea8fc9c9b33e7755f4b28e19f075bd64499"
 dependencies = [
  "aead",
  "anyhow",
@@ -4136,8 +4223,10 @@ dependencies = [
  "governor",
  "hex",
  "hostname",
- "http",
- "hyper",
+ "http 1.1.0",
+ "http-body-util",
+ "hyper 1.2.0",
+ "hyper-util",
  "igd",
  "iroh-base",
  "iroh-metrics",
@@ -4166,6 +4255,7 @@ dependencies = [
  "smallvec",
  "socket2 0.5.6",
  "ssh-key",
+ "strum",
  "stun-rs",
  "surge-ping",
  "thiserror",
@@ -4178,6 +4268,7 @@ dependencies = [
  "trust-dns-resolver",
  "ttl_cache",
  "url",
+ "watchable",
  "webpki-roots",
  "windows 0.51.1",
  "wmi",
@@ -4187,9 +4278,9 @@ dependencies = [
 
 [[package]]
 name = "iroh-sync"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0ee3f2eb531a42f76ce69e918d6dd284e6bc2b91700e78f5d8cda6e692d74da"
+checksum = "3e27f9c5bf0576ad2786c1e32ee046518144b8f221eef6578c882633b6e27985"
 dependencies = [
  "anyhow",
  "bytes 1.5.0",
@@ -6863,9 +6954,9 @@ dependencies = [
  "futures-core",
  "futures-util",
  "h2",
- "http",
- "http-body",
- "hyper",
+ "http 0.2.12",
+ "http-body 0.4.6",
+ "hyper 0.14.28",
  "hyper-rustls",
  "hyper-tls",
  "ipnet",
@@ -7758,7 +7849,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4e6d1f422a568af1e98db37c6d0427c7218459ccac39218fd15a51a34d3933af"
 dependencies = [
  "hex",
- "http",
+ "http 0.2.12",
  "iri-string",
  "k256 0.11.6",
  "rand 0.8.5",
@@ -8404,7 +8495,7 @@ checksum = "6f5c24057cf0e1c1a88fb2a12d19fe6e7ea6a24b74775352224a9718a8e9eb43"
 dependencies = [
  "base64 0.13.1",
  "futures",
- "hyper",
+ "hyper 0.14.28",
  "hyper-old-types",
  "hyper-openssl",
  "hyper-tls",
@@ -9379,6 +9470,18 @@ name = "wasm-bindgen-shared"
 version = "0.2.92"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af190c94f2773fdb3729c55b007a722abb5384da03bc0986df4c289bf5567e96"
+
+[[package]]
+name = "watchable"
+version = "1.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "45b42a2f611916b5965120a9cde2b60f2db4454826dd9ad5e6f47c24a5b3b259"
+dependencies = [
+ "event-listener 4.0.3",
+ "futures-util",
+ "parking_lot",
+ "thiserror",
+]
 
 [[package]]
 name = "web-sys"
