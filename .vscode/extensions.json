@@ -1,3 +1,8 @@
 {
-  "recommendations": ["rust-lang.rust-analyzer"]
+  "recommendations": [
+    "rust-lang.rust-analyzer",
+    "serayuzgur.crates",
+    "tamasfe.even-better-toml",
+    "usernamehw.errorlens"
+  ]
 }

@@ -1,0 +1,57 @@
+query GetDapp($dappId: String, $modelId: String) {
+  getDapp(id: $dappId, modelId: $modelId) {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    logo
+    website
+    defaultFolderName
+    description
+    models {
+      modelName
+      internal
+      streams {
+        modelId
+        createdAt
+        schema
+        isPublicDomain
+        encryptable
+        version
+        latest
+      }
+    }
+    address
+    ceramic
+  }
+}
+
+query GetDapps {
+  getDapps {
+    id
+    createdAt
+    updatedAt
+    deletedAt
+    name
+    logo
+    website
+    defaultFolderName
+    description
+    models {
+      modelName
+      internal
+      streams {
+        modelId
+        createdAt
+        schema
+        isPublicDomain
+        encryptable
+        version
+        latest
+      }
+    }
+    address
+    ceramic
+  }
+}
