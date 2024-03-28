@@ -8,6 +8,7 @@ use dataverse_ceramic::{
 use diesel::prelude::*;
 use int_enum::IntEnum;
 
+use dataverse_file_types::core::stream as stream_core;
 use crate::errors::PgSqlEventError;
 
 #[derive(Debug, Queryable, Selectable, Insertable, AsChangeset)]
@@ -86,10 +87,10 @@ impl Stream {
 	}
 }
 
-impl TryFrom<&dataverse_core::stream::Stream> for Stream {
+impl TryFrom<&stream_core::Stream> for Stream {
 	type Error = anyhow::Error;
 
-	fn try_from(value: &dataverse_core::stream::Stream) -> Result<Self, Self::Error> {
+	fn try_from(value: &stream_core::Stream) -> Result<Self, Self::Error> {
 		Ok(Self {
 			stream_id: value.stream_id()?.to_string(),
 			dapp_id: value.dapp_id,
@@ -101,16 +102,16 @@ impl TryFrom<&dataverse_core::stream::Stream> for Stream {
 	}
 }
 
-impl TryInto<dataverse_core::stream::Stream> for Stream {
+impl TryInto<stream_core::Stream> for Stream {
 	type Error = anyhow::Error;
 
-	fn try_into(self) -> Result<dataverse_core::stream::Stream, Self::Error> {
+	fn try_into(self) -> Result<stream_core::Stream, Self::Error> {
 		let model = match &self.model_id {
 			Some(model) => Some(StreamId::from_str(model)?),
 			None => None,
 		};
 		let stream_id = self.stream_id()?;
-		Ok(dataverse_core::stream::Stream {
+		Ok(stream_core::Stream {
 			r#type: stream_id.r#type.int_value(),
 			dapp_id: self.dapp_id,
 			genesis: stream_id.cid,

@@ -1,5 +1,5 @@
 [package]
-name = "dataverse-file-system"
+name = "dataverse-file-types"
 version = "0.1.0"
 edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -16,7 +16,6 @@ ceramic-core = { workspace = true }
 ceramic-http-client = { workspace = true }
 chrono = { workspace = true }
 dataverse-ceramic = { workspace = true }
-dataverse-core = { workspace = true }
 diesel = { workspace = true }
 fang = { workspace = true }
 int-enum = { workspace = true }
@@ -29,3 +28,7 @@ serde_json = { workspace = true }
 serde_repr = "0.1.18"
 tracing = { workspace = true }
 uuid = { workspace = true }
+dapp-table-client = { workspace = true }
+once_cell = { workspace = true }
+tokio = { workspace = true }
+

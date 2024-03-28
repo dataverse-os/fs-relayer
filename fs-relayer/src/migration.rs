@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use anyhow::Context;
 use dataverse_ceramic::StreamOperator;
-use dataverse_core::{store::dapp, stream::StreamStore};
+use dataverse_file_types::core::{dapp_store, stream::StreamStore};
 
 use crate::{config::Config, iroh_store, pgsql_store};
 
@@ -26,7 +26,7 @@ async fn migration_stream_store(
     let streams = from.list_all_streams().await?;
     for mut stream in streams {
         let stream_id = stream.stream_id()?;
-        let ceramic = dapp::get_dapp_ceramic(&stream.dapp_id).await?;
+        let ceramic = dapp_store::get_dapp_ceramic(&stream.dapp_id).await?;
         let state = operator
             .load_stream_state(&ceramic, &stream_id, Some(stream.tip))
             .await?;

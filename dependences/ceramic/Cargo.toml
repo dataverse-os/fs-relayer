@@ -9,8 +9,9 @@ anyhow = { workspace = true }
 async-trait = { workspace = true }
 base64 = "0.21.5"
 bytes = { workspace = true }
-ceramic-http-client = { git = "https://github.com/dataverse-os/ceramic-http-client-rs", branch = "patch-methods" }
-ceramic-kubo-rpc-server = { git = "https://github.com/dataverse-os/rust-ceramic", branch = "patch-kubo-block-put" }
+ceramic-core = { workspace = true }
+ceramic-http-client = { workspace = true }
+ceramic-kubo-rpc-server = { workspace = true }
 chrono = { workspace = true }
 dag-jose = "0.1.3"
 did-method-key = "0.2.2"

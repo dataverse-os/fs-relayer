@@ -5,7 +5,7 @@ use async_std::task;
 use ceramic_core::Cid;
 use chrono::{DateTime, Utc};
 use dataverse_ceramic::{self as ceramic, StreamId};
-use dataverse_core::store::dapp;
+use crate::core::dapp_store;
 use int_enum::IntEnum;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -72,7 +72,7 @@ impl Policy for IndexFileProcessor {
 	async fn effect_at(&self, state: &ceramic::StreamState) -> Result<bool> {
 		// check model_name is indexfile
 		let model_id = state.must_model()?;
-		let model = dapp::get_model(&model_id).await?;
+		let model = dapp_store::get_model(&model_id).await?;
 		Ok(model.name == "indexFile")
 	}
 
@@ -173,7 +173,7 @@ impl IndexFileProcessor {
 		if let Some(p) = &acl.encryption_provider {
 			let linked_ceramic_models = p.linked_ceramic_models()?;
 			for ele in linked_ceramic_models {
-				let model = dapp::get_model(&ele).await?;
+				let model = dapp_store::get_model(&ele).await?;
 				if model.dapp_id != self.state.dapp_id {
 					anyhow::bail!(IndexFileError::LinkedModelNotInApp);
 				}

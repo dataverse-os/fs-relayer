@@ -7,7 +7,7 @@ use fang::typetag;
 use fang::AsyncRunnable;
 use fang::FangError;
 
-use crate::stream::Stream;
+use crate::core::stream::Stream;
 
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "fang::serde")]

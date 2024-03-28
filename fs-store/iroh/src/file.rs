@@ -2,8 +2,8 @@ use anyhow::Context;
 use ceramic_core::{Cid, StreamId};
 use dataverse_ceramic::event::{Event, EventsLoader, EventsUploader};
 use dataverse_ceramic::Ceramic;
-use dataverse_core::stream::StreamStore;
-use dataverse_file_system::file::StreamFileLoader;
+use dataverse_file_types::core::stream::StreamStore;
+use dataverse_file_types::file::StreamFileLoader;
 
 use crate::errors::IrohClientError;
 use crate::Client;

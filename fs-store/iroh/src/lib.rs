@@ -8,7 +8,7 @@ use anyhow::Context;
 use ceramic_core::{Cid, StreamId};
 use dataverse_ceramic::stream::StreamState;
 use dataverse_ceramic::{kubo, Ceramic, StreamLoader, StreamOperator, StreamsLoader};
-use dataverse_core::stream::{Stream, StreamStore};
+use dataverse_file_types::core::stream::{Stream, StreamStore};
 use futures::TryStreamExt;
 use iroh::client::mem::{Doc, Iroh};
 pub use iroh::net::key::SecretKey;

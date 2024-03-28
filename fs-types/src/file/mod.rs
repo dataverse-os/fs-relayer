@@ -11,13 +11,13 @@ pub mod index_file;
 pub mod index_folder;
 
 mod errors;
+mod client;
 
 pub use index_file::*;
 
 use std::fmt::Display;
 
 use anyhow::Context;
-pub use client::*;
 use dataverse_ceramic::StreamState;
 pub use operator::*;
 

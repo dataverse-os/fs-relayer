@@ -2,10 +2,12 @@ mod config;
 mod migration;
 mod response;
 mod state;
+mod client;
+mod error;
 
 use crate::{config::Config, response::JsonResponse};
 use anyhow::Context;
-use dataverse_core::store::dapp::get_model_by_name;
+use dataverse_file_types::core::dapp_store::get_model_by_name;
 use migration::migration;
 use serde_json::Value;
 
@@ -17,9 +19,10 @@ use actix_web::{http::header, middleware::Logger, web, App, HttpResponse, HttpSe
 use dataverse_ceramic::kubo::message::MessageSubscriber;
 use dataverse_ceramic::network::Network;
 use dataverse_ceramic::{commit, kubo, StreamId, StreamOperator};
-use dataverse_core::stream::StreamStore;
-use dataverse_file_system::file::{LoadFilesOption, StreamFileLoader};
-use dataverse_file_system::task as fs_task;
+use dataverse_file_types::core::stream::StreamStore;
+use dataverse_file_types::file::StreamFileLoader;
+use crate::client::LoadFilesOption;
+use dataverse_file_types::task as fs_task;
 use futures::future;
 use serde::Deserialize;
 use state::*;

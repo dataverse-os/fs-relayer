@@ -1151,25 +1151,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "ceramic-event"
-version = "0.14.0"
-source = "git+https://github.com/ceramicnetwork/rust-ceramic?branch=main#619a6a3536f8e070369e26f5532649f679301cda"
-dependencies = [
- "anyhow",
- "ceramic-core 0.14.0",
- "multihash 0.18.1",
- "once_cell",
- "rand 0.8.5",
- "serde",
-]
-
-[[package]]
 name = "ceramic-http-client"
 version = "0.1.0"
 source = "git+https://github.com/dataverse-os/ceramic-http-client-rs?branch=patch-methods#1374b2085dff847b6c29f07c6b28a8212e374455"
 dependencies = [
  "anyhow",
- "ceramic-event 0.9.0",
+ "ceramic-event",
  "json-patch",
  "reqwest",
  "schemars",
@@ -1204,30 +1191,6 @@ dependencies = [
  "serde_json",
  "swagger",
  "url",
-]
-
-[[package]]
-name = "ceramic-kubo-rpc-server"
-version = "0.14.0"
-source = "git+https://github.com/ceramicnetwork/rust-ceramic?branch=main#619a6a3536f8e070369e26f5532649f679301cda"
-dependencies = [
- "async-trait",
- "chrono",
- "futures",
- "hyper 0.14.28",
- "hyper-openssl",
- "hyper-tls",
- "lazy_static",
- "log 0.4.21",
- "native-tls",
- "openssl",
- "percent-encoding 2.3.1",
- "regex",
- "serde",
- "serde_json",
- "swagger",
- "url",
- "validator",
 ]
 
 [[package]]
@@ -1791,19 +1754,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dapp-table-client"
-version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#9aa6ba3f4a5cd2297ae1d4a2e245c8c7577ac73e"
-dependencies = [
- "anyhow",
- "graphql_client",
- "log 0.4.21",
- "reqwest",
- "serde",
- "tokio",
-]
-
-[[package]]
 name = "darling"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1955,8 +1905,9 @@ dependencies = [
  "async-trait",
  "base64 0.21.7",
  "bytes 1.5.0",
+ "ceramic-core 0.9.0",
  "ceramic-http-client",
- "ceramic-kubo-rpc-server 0.9.0",
+ "ceramic-kubo-rpc-server",
  "chrono",
  "dag-jose",
  "did-method-key",
@@ -1994,101 +1945,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "dataverse-ceramic"
-version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#9aa6ba3f4a5cd2297ae1d4a2e245c8c7577ac73e"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64 0.21.7",
- "bytes 1.5.0",
- "ceramic-core 0.14.0",
- "ceramic-event 0.14.0",
- "ceramic-http-client",
- "ceramic-kubo-rpc-server 0.14.0",
- "chrono",
- "dag-jose",
- "ethers-core",
- "ethers-providers",
- "expect-test",
- "fang",
- "futures",
- "futures-util",
- "hex",
- "int-enum",
- "json-patch",
- "libipld 0.16.0",
- "log 0.4.21",
- "lru",
- "multibase 0.9.1",
- "once_cell",
- "postgres-openssl",
- "primitive-types 0.12.2",
- "serde",
- "serde_json",
- "serde_repr",
- "sha2 0.10.8",
- "ssh-key",
- "ssi",
- "swagger",
- "tokio",
- "tracing",
- "unsigned-varint",
- "url",
-]
-
-[[package]]
-name = "dataverse-core"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "ceramic-core 0.14.0",
- "dapp-table-client 0.1.0",
- "dataverse-ceramic 0.1.0",
- "fang",
- "int-enum",
- "log 0.4.21",
- "once_cell",
- "serde",
- "serde_json",
- "tokio",
- "uuid 1.7.0",
-]
-
-[[package]]
-name = "dataverse-core"
-version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#9aa6ba3f4a5cd2297ae1d4a2e245c8c7577ac73e"
-dependencies = [
- "anyhow",
- "async-trait",
- "ceramic-core 0.14.0",
- "dapp-table-client 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "dataverse-ceramic 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "fang",
- "int-enum",
- "log 0.4.21",
- "once_cell",
- "serde",
- "serde_json",
- "tokio",
- "uuid 1.7.0",
-]
-
-[[package]]
 name = "dataverse-file-relayer"
 version = "0.1.0"
 dependencies = [
  "actix-web",
  "anyhow",
+ "async-trait",
+ "ceramic-core 0.14.0",
  "chrono",
  "confy",
- "dataverse-ceramic 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "dataverse-core 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "dataverse-file-system 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "dataverse-iroh-store 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "dataverse-pgsql-store 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
+ "dataverse-ceramic",
+ "dataverse-file-types",
+ "dataverse-iroh-store",
+ "dataverse-pgsql-store",
  "derive_more 0.99.17",
  "directories 5.0.1",
  "env_logger 0.10.2",
@@ -2104,7 +1973,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "dataverse-file-system"
+name = "dataverse-file-types"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -2114,67 +1983,19 @@ dependencies = [
  "ceramic-core 0.14.0",
  "ceramic-http-client",
  "chrono",
- "dataverse-ceramic 0.1.0",
- "dataverse-core 0.1.0",
+ "dapp-table-client",
+ "dataverse-ceramic",
  "diesel",
  "fang",
  "int-enum",
  "json-patch",
  "log 0.4.21",
+ "once_cell",
  "openssl",
  "postgres-openssl",
  "serde",
  "serde_json",
  "serde_repr",
- "tracing",
- "uuid 1.7.0",
-]
-
-[[package]]
-name = "dataverse-file-system"
-version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#9aa6ba3f4a5cd2297ae1d4a2e245c8c7577ac73e"
-dependencies = [
- "anyhow",
- "async-std",
- "async-trait",
- "base64 0.21.7",
- "ceramic-core 0.14.0",
- "ceramic-http-client",
- "chrono",
- "dataverse-ceramic 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "dataverse-core 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "diesel",
- "fang",
- "int-enum",
- "json-patch",
- "log 0.4.21",
- "openssl",
- "postgres-openssl",
- "serde",
- "serde_json",
- "serde_repr",
- "tracing",
- "uuid 1.7.0",
-]
-
-[[package]]
-name = "dataverse-iroh-store"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "ceramic-core 0.14.0",
- "dataverse-ceramic 0.1.0",
- "dataverse-core 0.1.0",
- "dataverse-file-system 0.1.0",
- "futures",
- "iroh",
- "iroh-bytes",
- "iroh-sync",
- "num_cpus",
- "serde_json",
- "tempfile",
  "tokio",
  "tracing",
  "uuid 1.7.0",
@@ -2183,14 +2004,12 @@ dependencies = [
 [[package]]
 name = "dataverse-iroh-store"
 version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#9aa6ba3f4a5cd2297ae1d4a2e245c8c7577ac73e"
 dependencies = [
  "anyhow",
  "async-trait",
  "ceramic-core 0.14.0",
- "dataverse-ceramic 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "dataverse-core 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "dataverse-file-system 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
+ "dataverse-ceramic",
+ "dataverse-file-types",
  "futures",
  "iroh",
  "iroh-bytes",
@@ -2210,27 +2029,8 @@ dependencies = [
  "anyhow",
  "async-trait",
  "ceramic-core 0.14.0",
- "dataverse-ceramic 0.1.0",
- "dataverse-core 0.1.0",
- "dataverse-file-system 0.1.0",
- "diesel",
- "int-enum",
- "serde_json",
- "tracing",
- "uuid 1.7.0",
-]
-
-[[package]]
-name = "dataverse-pgsql-store"
-version = "0.1.0"
-source = "git+https://github.com/dataverse-os/network-crates?branch=main#9aa6ba3f4a5cd2297ae1d4a2e245c8c7577ac73e"
-dependencies = [
- "anyhow",
- "async-trait",
- "ceramic-core 0.14.0",
- "dataverse-ceramic 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "dataverse-core 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
- "dataverse-file-system 0.1.0 (git+https://github.com/dataverse-os/network-crates?branch=main)",
+ "dataverse-ceramic",
+ "dataverse-file-types",
  "diesel",
  "int-enum",
  "serde_json",
@@ -4036,12 +3836,6 @@ dependencies = [
  "unicode-bidi",
  "unicode-normalization",
 ]
-
-[[package]]
-name = "if_chain"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb56e1aa765b4b4f3aadfab769793b7087bb03a4ea4920644a6d238e2df5b9ed"
 
 [[package]]
 name = "igd"
@@ -9583,48 +9377,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.52",
-]
-
-[[package]]
-name = "validator"
-version = "0.16.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b92f40481c04ff1f4f61f304d61793c7b56ff76ac1469f1beb199b1445b253bd"
-dependencies = [
- "idna 0.4.0",
- "lazy_static",
- "regex",
- "serde",
- "serde_derive",
- "serde_json",
- "url",
- "validator_derive",
-]
-
-[[package]]
-name = "validator_derive"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc44ca3088bb3ba384d9aecf40c6a23a676ce23e09bdaca2073d99c207f864af"
-dependencies = [
- "if_chain",
- "lazy_static",
- "proc-macro-error 1.0.4",
- "proc-macro2",
- "quote",
- "regex",
- "syn 1.0.109",
- "validator_types",
-]
-
-[[package]]
-name = "validator_types"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "111abfe30072511849c5910134e8baf8dc05de4c0e5903d681cbd5c9c4d611e3"
-dependencies = [
- "proc-macro2",
- "syn 1.0.109",
 ]
 
 [[package]]

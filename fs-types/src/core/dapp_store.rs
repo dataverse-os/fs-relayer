@@ -6,7 +6,7 @@ use dataverse_ceramic::Ceramic;
 use once_cell::sync::Lazy;
 use tokio::sync::Mutex;
 
-use crate::store::errors::ModelStoreError;
+use crate::core::errors::ModelStoreError;
 
 #[derive(Debug, Clone)]
 pub struct Model {

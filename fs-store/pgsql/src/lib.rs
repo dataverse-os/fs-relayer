@@ -3,7 +3,7 @@ pub mod models;
 pub mod schema;
 
 use anyhow::Context;
-use dataverse_file_system::file::{IndexFile, StreamFileLoader};
+use dataverse_file_types::file::{IndexFile, StreamFileLoader};
 use diesel::dsl::sql;
 use diesel::sql_types::{Bool, Text};
 use int_enum::IntEnum;
@@ -13,7 +13,7 @@ use std::sync::Arc;
 use ceramic_core::{Cid, StreamId};
 use dataverse_ceramic::{kubo, Ceramic, Event, EventsUploader, StreamState};
 use dataverse_ceramic::{EventsLoader, StreamLoader, StreamOperator, StreamsLoader};
-use dataverse_core::stream::{Stream, StreamStore};
+use dataverse_file_types::core::stream::{Stream, StreamStore};
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
 use errors::{ConnectionPoolError, PgSqlClientError};

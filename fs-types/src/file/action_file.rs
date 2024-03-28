@@ -1,6 +1,6 @@
 use ceramic_core::StreamId;
 use chrono::{DateTime, Utc};
-use dataverse_core::store::dapp;
+use crate::core::dapp_store;
 use serde::{Deserialize, Serialize};
 
 use crate::policy::Policy;
@@ -61,7 +61,7 @@ impl Policy for ActionFileProcessor {
 	) -> anyhow::Result<bool> {
 		// check model_name is indexfile
 		let model_id = state.must_model()?;
-		let model = dapp::get_model(&model_id).await?;
+		let model = dapp_store::get_model(&model_id).await?;
 		Ok(model.name == "indexFile")
 	}
 }

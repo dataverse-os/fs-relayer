@@ -9,8 +9,7 @@ anyhow = { workspace = true }
 async-trait = { workspace = true }
 ceramic-core = { workspace = true }
 dataverse-ceramic = { workspace = true }
-dataverse-core = { workspace = true }
-dataverse-file-system = { workspace = true }
+dataverse-file-types = { workspace = true }
 futures = "0.3.15"
 iroh = "0.12.0"
 iroh-bytes = "0.12.0"
