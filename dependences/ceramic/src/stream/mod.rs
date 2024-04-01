@@ -5,8 +5,8 @@ pub mod patch;
 
 use super::commit_id::CommitId;
 use crate::event::{Event, VerifyOption};
-use ceramic_core::{StreamId, StreamIdType};
 use crate::types::strings::MultiBase32String;
+use ceramic_core::{StreamId, StreamIdType};
 use ceramic_http_client::api::StateLog;
 use int_enum::IntEnum;
 use libipld::Cid;

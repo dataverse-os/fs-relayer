@@ -1,8 +1,8 @@
+use ceramic_core::StreamId;
 use libipld::Cid;
 use multibase::Base;
 use std::{fmt::Display, io::Write, str::FromStr};
 use unsigned_varint::{decode, encode};
-use ceramic_core::StreamId;
 
 #[derive(PartialEq, Debug)]
 pub struct CommitId {

@@ -18,48 +18,44 @@ pub struct JwsSignature {
     pub signature: Base64UrlString,
 }
 
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JwsWrap {
-    pub value : ceramic_core::Jws,
+    pub value: ceramic_core::Jws,
 }
 
 impl Clone for JwsWrap {
     fn clone(&self) -> Self {
         let link = self.value.link.clone();
         let payload = self.value.payload.clone();
-        let signatures = self.value.signatures.iter().map(|s| {
-            ceramic_core::JwsSignature {
+        let signatures = self
+            .value
+            .signatures
+            .iter()
+            .map(|s| ceramic_core::JwsSignature {
                 protected: s.protected.clone(),
                 signature: s.signature.clone(),
-            }
-        }).collect();
+            })
+            .collect();
 
-        Self::new(ceramic_core::Jws{
+        Self::new(ceramic_core::Jws {
             link,
             payload,
-            signatures
+            signatures,
         })
     }
 }
 
 impl JwsWrap {
-    pub(crate) fn new(value : ceramic_core::Jws) -> Self {
-        Self {
-            value
-        }
+    pub(crate) fn new(value: ceramic_core::Jws) -> Self {
+        Self { value }
     }
 }
 
 impl From<ceramic_core::Jws> for JwsWrap {
     fn from(value: ceramic_core::Jws) -> Self {
-        Self {
-            value
-        }
+        Self { value }
     }
 }
-
-
 
 /// A JWS object
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -116,7 +112,6 @@ impl Jws {
     }
 }
 
-
 impl TryFrom<Vec<u8>> for Jws {
     type Error = anyhow::Error;
 
@@ -125,7 +120,6 @@ impl TryFrom<Vec<u8>> for Jws {
         jws.try_into()
     }
 }
-
 
 impl TryFrom<Vec<u8>> for JwsWrap {
     type Error = anyhow::Error;
@@ -163,11 +157,13 @@ impl TryFrom<JsonWebSignature> for JwsWrap {
     fn try_from(value: JsonWebSignature) -> Result<Self, Self::Error> {
         let link = ceramic_core::MultiBase32String::try_from(&value.link)?;
         let payload = value.payload.into();
-        let signatures = value.signatures.into_iter()
+        let signatures = value
+            .signatures
+            .into_iter()
             .map(|sig| ceramic_core::JwsSignature {
-                    protected: sig.protected.map(Into::into),
-                    signature: sig.signature.into(),
-                })
+                protected: sig.protected.map(Into::into),
+                signature: sig.signature.into(),
+            })
             .collect::<Vec<_>>();
         let jws = ceramic_core::Jws {
             link: Some(link),
@@ -178,8 +174,6 @@ impl TryFrom<JsonWebSignature> for JwsWrap {
         Ok(Self::new(jws))
     }
 }
-
-
 
 impl TryInto<JsonWebSignature> for Jws {
     type Error = anyhow::Error;
@@ -207,7 +201,6 @@ impl TryInto<JsonWebSignature> for Jws {
     }
 }
 
-
 impl TryInto<JsonWebSignature> for JwsWrap {
     type Error = anyhow::Error;
 
@@ -217,7 +210,9 @@ impl TryInto<JsonWebSignature> for JwsWrap {
             None => anyhow::bail!(JwsError::NoLink),
         };
 
-        let signatures = self.value.signatures
+        let signatures = self
+            .value
+            .signatures
             .iter()
             .map(|x| dag_jose::Signature {
                 header: Default::default(),
@@ -251,10 +246,8 @@ impl ToCid for crate::types::jws::Jws {
     }
 }
 
-
 impl ToCid for JwsWrap {
     fn cid(&self) -> anyhow::Result<Cid> {
-
         let jws: JsonWebSignature = self.clone().try_into()?;
         jws.cid()
     }
@@ -264,7 +257,6 @@ impl ToCid for JwsWrap {
         jws.to_vec()
     }
 }
-
 
 impl ToCid for JsonWebSignature {
     fn cid(&self) -> anyhow::Result<Cid> {

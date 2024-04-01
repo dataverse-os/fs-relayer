@@ -2,9 +2,9 @@
 
 use std::collections::HashMap;
 
+use crate::StreamId;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use crate::StreamId;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CACAO {

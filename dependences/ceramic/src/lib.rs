@@ -11,8 +11,8 @@ pub mod network;
 pub mod stream;
 pub mod types;
 
-pub use ceramic_core::StreamId;
 pub use ceramic_core::Cid;
+pub use ceramic_core::StreamId;
 
 pub use event::commit;
 pub use event::{Event, EventValue, EventsLoader, EventsUploader};

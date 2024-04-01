@@ -1,20 +1,20 @@
 use std::{collections::HashMap, sync::Arc};
 
 use anyhow::Result;
-use chrono::Utc;
 use ceramic_box::event::{Event, EventValue, VerifyOption};
 use ceramic_box::{StreamId, StreamState};
+use chrono::Utc;
 use dataverse_file_types::core::dapp_store;
 use dataverse_file_types::core::stream::{Stream, StreamStore};
 use int_enum::IntEnum;
 
-use dataverse_file_types::file::status::Status;
-use dataverse_file_types::file::index_file::IndexFile;
-use dataverse_file_types::file::index_folder::IndexFolder;
-use dataverse_file_types::file::FileModel;
-use dataverse_file_types::file::{operator::StreamFileLoader, StreamFile};
 use crate::error::FileClientError;
 pub use dataverse_file_types::core::client::*;
+use dataverse_file_types::file::index_file::IndexFile;
+use dataverse_file_types::file::index_folder::IndexFolder;
+use dataverse_file_types::file::status::Status;
+use dataverse_file_types::file::FileModel;
+use dataverse_file_types::file::{operator::StreamFileLoader, StreamFile};
 
 pub struct Client {
     pub operator: Arc<dyn StreamFileLoader>,
@@ -75,7 +75,11 @@ impl StreamFileTrait for Client {
         let model_id = &stream_state.must_model()?;
         let model = dapp_store::get_model(model_id).await?;
         if model.dapp_id != *dapp_id {
-            anyhow::bail!(FileClientError::StreamWithModelNotInDapp(stream_id.clone(), model_id.clone(), *dapp_id));
+            anyhow::bail!(FileClientError::StreamWithModelNotInDapp(
+                stream_id.clone(),
+                model_id.clone(),
+                *dapp_id
+            ));
         }
         match model.name.as_str() {
             "indexFile" => {
@@ -94,10 +98,8 @@ impl StreamFileTrait for Client {
             "indexFolder" | "contentFolder" => StreamFile::new_with_content(stream_state),
             _ => {
                 let mut file = StreamFile::new_with_content(stream_state)?;
-                let index_file_model_id = self
-                    .get_file_model(dapp_id, FileModel::IndexFile)
-                    .await?
-                    .id;
+                let index_file_model_id =
+                    self.get_file_model(dapp_id, FileModel::IndexFile).await?.id;
 
                 let index_file = self
                     .operator
@@ -114,11 +116,11 @@ impl StreamFileTrait for Client {
                     }
                     Err(err) => {
                         tracing::error!(
-							model_id = index_file_model_id.to_string(),
-							stream_id = stream_id.to_string(),
-							"failed load index file model: {}",
-							err
-						);
+                            model_id = index_file_model_id.to_string(),
+                            stream_id = stream_id.to_string(),
+                            "failed load index file model: {}",
+                            err
+                        );
                         let desc = format!("failed load index file model: {}", err);
                         file.write_status(Status::NakedStream, desc);
                     }
@@ -272,15 +274,17 @@ impl StreamFileTrait for Client {
                 }
 
                 // set verified_status to -1 if file_id is None (illegal file)
-                let files = file_map.into_values().map(|mut file| {
-                    if file.file_id.is_none() {
-                        if let Some(content_id) = file.content_id.clone() {
-                            let desc = format!("file_id is None, content_id: {}", content_id);
-                            file.write_status(Status::NakedStream, desc);
+                let files = file_map
+                    .into_values()
+                    .map(|mut file| {
+                        if file.file_id.is_none() {
+                            if let Some(content_id) = file.content_id.clone() {
+                                let desc = format!("file_id is None, content_id: {}", content_id);
+                                file.write_status(Status::NakedStream, desc);
+                            }
                         }
-                    }
-                    file
-                })
+                        file
+                    })
                     .collect();
 
                 Ok(files)
@@ -311,7 +315,9 @@ impl StreamEventSaver for Client {
                         ),
                         None => {
                             if !signed.is_gensis() {
-                                anyhow::bail!(FileClientError::CommitStreamIdNotFoundOnStore(stream_id.clone()));
+                                anyhow::bail!(FileClientError::CommitStreamIdNotFoundOnStore(
+                                    stream_id.clone()
+                                ));
                             }
                             (
                                 Stream::new(dapp_id, stream_id.r#type.int_value(), event, None)?,

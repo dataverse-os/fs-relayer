@@ -1,5 +1,5 @@
-use ceramic_core::StreamId;
 use base64::Engine;
+use ceramic_core::StreamId;
 use libipld::Cid;
 
 macro_rules! impl_multi_base {

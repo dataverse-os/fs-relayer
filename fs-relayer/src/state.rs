@@ -1,11 +1,9 @@
 use std::sync::Arc;
 
+use crate::client::*;
 use ceramic_box::{commit, event::Event, StreamId, StreamState};
 use dataverse_file_types::core::stream::StreamStore;
-use dataverse_file_types::file::{
-    self, StreamFile, StreamFileLoader,
-};
-use crate::client::*;
+use dataverse_file_types::file::{self, StreamFile, StreamFileLoader};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]

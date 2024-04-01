@@ -1,25 +1,25 @@
+use crate::migration::migration;
 use crate::{config::Config, response::JsonResponse};
 use anyhow::Context;
 use dataverse_file_types::core::dapp_store::get_model_by_name;
-use crate::migration::migration;
 use serde_json::Value;
 
 use std::net::SocketAddrV4;
 use std::{str::FromStr, sync::Arc};
 
+use crate::state::*;
+use crate::task as fs_task;
 use actix_web::{get, post, put};
 use actix_web::{http::header, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
 use ceramic_box::kubo::message::MessageSubscriber;
 use ceramic_box::network::Network;
 use ceramic_box::{commit, kubo, StreamId};
-use crate::task as fs_task;
+use dataverse_file_types::core::client::LoadFilesOption;
 use futures::future;
 use serde::Deserialize;
-use crate::state::*;
 use tokio::sync::Mutex;
 use tokio::task::JoinHandle;
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
-use dataverse_file_types::core::client::LoadFilesOption;
 
 #[derive(Deserialize)]
 struct LoadFileQuery {
@@ -108,7 +108,7 @@ async fn post_load_streams(
             query.account.clone(),
             payload.signals.clone(),
         )
-            .await;
+        .await;
     }
 
     if let (Some(stream_ids_str), Some(dapp_id)) = (&query.stream_ids, &query.dapp_id) {
@@ -252,8 +252,10 @@ async fn put_update_stream(
     }
 }
 
-
-pub fn web_server(state: crate::state::AppState, addr: SocketAddrV4) -> anyhow::Result<crate::JoinHandleWithError> {
+pub fn web_server(
+    state: crate::state::AppState,
+    addr: SocketAddrV4,
+) -> anyhow::Result<crate::JoinHandleWithError> {
     tracing::info!("start server on {}", addr);
     let server = HttpServer::new(move || {
         App::new()
@@ -265,8 +267,8 @@ pub fn web_server(state: crate::state::AppState, addr: SocketAddrV4) -> anyhow::
             .service(post_create_stream)
             .service(put_update_stream)
     })
-        .bind(addr)?
-        .run();
+    .bind(addr)?
+    .run();
 
     let web = tokio::spawn(async { server.await.context("server error") });
     return Ok(web);

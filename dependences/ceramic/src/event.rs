@@ -7,7 +7,14 @@ pub mod operator;
 pub mod signed;
 pub mod verify;
 
+pub use self::anchor::*;
+pub use self::ipld::*;
+pub use self::operator::*;
+pub use self::signed::*;
+pub use self::verify::*;
 use crate::stream::{LogType, StreamState};
+use crate::types::jws::JwsWrap;
+pub use crate::types::jws::ToCid;
 use anyhow::{Context, Result};
 use ceramic_http_client::api::StateLog;
 use errors::EventError;
@@ -15,15 +22,6 @@ use libipld::cbor::DagCborCodec;
 use libipld::prelude::Codec;
 use libipld::Cid;
 use serde::{Deserialize, Serialize};
-use crate::types::jws::{JwsWrap};
-pub use crate::types::jws::ToCid;
-pub use self::anchor::*;
-pub use self::ipld::*;
-pub use self::operator::*;
-pub use self::signed::*;
-pub use self::verify::*;
-
-
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Event {
@@ -119,7 +117,6 @@ impl Event {
     }
 }
 
-
 impl TryFrom<ceramic_http_client::api::Commit> for Event {
     type Error = anyhow::Error;
 
@@ -163,7 +160,6 @@ impl TryFrom<ceramic_core::Jws> for Event {
         })
     }
 }
-
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum EventValue {

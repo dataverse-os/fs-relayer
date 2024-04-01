@@ -1,8 +1,8 @@
 use std::str::FromStr;
 
 use crate::types::jws::{Jws, JwsWrap, ToCid};
-use ceramic_core::{StreamId, StreamIdType};
 use anyhow::{Context, Ok};
+use ceramic_core::{StreamId, StreamIdType};
 use int_enum::IntEnum;
 use libipld::Cid;
 use serde::{Deserialize, Serialize};
@@ -88,7 +88,7 @@ where
                 data: None,
                 jws: Some(signed.jws.value),
                 linked_block: Some(ceramic_core::Base64String::from(linked_block)),
-                cacao_block: Some(ceramic_core::Base64String::from(cacao_block))
+                cacao_block: Some(ceramic_core::Base64String::from(cacao_block)),
             });
         }
         Err(anyhow::anyhow!("invalid event value"))

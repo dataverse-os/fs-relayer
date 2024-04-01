@@ -1,12 +1,19 @@
 use ceramic_box::event::Event;
 use ceramic_box::{StreamId, StreamState};
 
-
 #[async_trait::async_trait]
 pub trait StreamFileTrait {
-    async fn load_file(&self, dapp_id: &uuid::Uuid, stream_id: &StreamId) -> anyhow::Result<crate::file::StreamFile>;
+    async fn load_file(
+        &self,
+        dapp_id: &uuid::Uuid,
+        stream_id: &StreamId,
+    ) -> anyhow::Result<crate::file::StreamFile>;
 
-    async fn load_stream(&self, dapp_id: &uuid::Uuid, stream_id: &StreamId) -> anyhow::Result<StreamState>;
+    async fn load_stream(
+        &self,
+        dapp_id: &uuid::Uuid,
+        stream_id: &StreamId,
+    ) -> anyhow::Result<StreamState>;
 
     async fn load_files(
         &self,
