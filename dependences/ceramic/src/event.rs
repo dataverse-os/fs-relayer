@@ -135,7 +135,7 @@ impl TryFrom<ceramic_http_client::api::Commit> for Event {
             ceramic_http_client::api::CommitValue::Signed(signed) => Ok(Event {
                 cid: value.cid.as_ref().try_into()?,
                 value: EventValue::Signed(Box::new(SignedValue {
-                    jws: JwsWrap::new(signed.jws),
+                    jws: signed.jws,
                     linked_block: Some(signed.linked_block.to_vec()?),
                     cacao_block: None,
                 })),
@@ -148,8 +148,6 @@ impl TryFrom<ceramic_core::Jws> for Event {
     type Error = anyhow::Error;
 
     fn try_from(jws: ceramic_core::Jws) -> std::result::Result<Self, Self::Error> {
-        let jws = JwsWrap::new(jws);
-
         Ok(Self {
             cid: jws.cid()?,
             value: EventValue::Signed(Box::new(SignedValue {

@@ -16,11 +16,22 @@ use super::cacao::CACAO;
 use super::ipld::IpldAs;
 use super::StreamStateApplyer;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct SignedValue {
-    pub jws: JwsWrap,
+    pub jws: ceramic_core::Jws,
     pub linked_block: Option<Vec<u8>>,
     pub cacao_block: Option<Vec<u8>>,
+}
+
+impl Clone for SignedValue {
+    fn clone(&self) -> Self {
+        let jws = JwsWrap::from(&self.jws).value;
+        Self {
+            jws,
+            linked_block: self.linked_block.clone(),
+            cacao_block: self.cacao_block.clone(),
+        }
+    }
 }
 
 impl From<SignedValue> for EventValue {
@@ -47,10 +58,10 @@ impl TryFrom<Vec<u8>> for SignedValue {
     type Error = anyhow::Error;
 
     fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
-        let jws = value.try_into()?;
+        let jws: JwsWrap = value.try_into()?;
 
         Ok(SignedValue {
-            jws,
+            jws: jws.value,
             linked_block: None,
             cacao_block: None,
         })
@@ -69,7 +80,7 @@ impl SignedValue {
     }
 
     pub fn protected(&self) -> anyhow::Result<Vec<u8>> {
-        let protected = &self.jws.value.signatures[0].protected;
+        let protected = &self.jws.signatures[0].protected;
         if let Some(p) = protected {
             return p.to_vec();
         }
@@ -96,7 +107,7 @@ impl SignedValue {
     }
 
     pub fn payload_link(&self) -> anyhow::Result<Cid> {
-        Ok(Cid::try_from(self.jws.value.payload.to_vec()?)?)
+        Ok(Cid::try_from(self.jws.payload.to_vec()?)?)
     }
 
     pub fn cacao_link(&self) -> anyhow::Result<Cid> {

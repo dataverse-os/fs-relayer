@@ -44,7 +44,7 @@ pub struct Data {
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Content {
-    pub jws: JwsWrap,
+    pub jws: ceramic_core::Jws,
     pub linked_block: Base64String,
     pub cacao_block: Base64String,
 }
@@ -86,7 +86,7 @@ where
             return Ok(Self {
                 header: None,
                 data: None,
-                jws: Some(signed.jws.value),
+                jws: Some(signed.jws),
                 linked_block: Some(ceramic_core::Base64String::from(linked_block)),
                 cacao_block: Some(ceramic_core::Base64String::from(cacao_block)),
             });
