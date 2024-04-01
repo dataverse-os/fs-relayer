@@ -15,14 +15,17 @@ use libipld::cbor::DagCborCodec;
 use libipld::prelude::Codec;
 use libipld::Cid;
 use serde::{Deserialize, Serialize};
-
+use crate::types::jws::{JwsWrap};
+pub use crate::types::jws::ToCid;
 pub use self::anchor::*;
 pub use self::ipld::*;
 pub use self::operator::*;
 pub use self::signed::*;
 pub use self::verify::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Event {
     pub cid: Cid,
     pub value: EventValue,
@@ -116,49 +119,53 @@ impl Event {
     }
 }
 
-// impl TryFrom<ceramic_http_client::api::Commit> for Event {
-//     type Error = anyhow::Error;
 
-//     fn try_from(value: ceramic_http_client::api::Commit) -> std::result::Result<Self, Self::Error> {
-//         match value.value {
-//             ceramic_http_client::api::CommitValue::Anchor(anchor) => Ok(Event {
-//                 cid: value.cid.as_ref().try_into()?,
-//                 value: EventValue::Anchor(Box::new(AnchorValue {
-//                     id: anchor.id.as_ref().try_into()?,
-//                     prev: anchor.prev.as_ref().try_into()?,
-//                     proof: anchor.proof.as_ref().try_into()?,
-//                     path: anchor.path,
-//                     proof_block: None,
-//                 })),
-//             }),
-//             ceramic_http_client::api::CommitValue::Signed(signed) => Ok(Event {
-//                 cid: value.cid.as_ref().try_into()?,
-//                 value: EventValue::Signed(Box::new(SignedValue {
-//                     jws: signed.jws,
-//                     linked_block: Some(signed.linked_block.to_vec()?),
-//                     cacao_block: None,
-//                 })),
-//             }),
-//         }
-//     }
-// }
+impl TryFrom<ceramic_http_client::api::Commit> for Event {
+    type Error = anyhow::Error;
 
-// impl TryFrom<ceramic_core::Jws> for Event {
-//     type Error = anyhow::Error;
+    fn try_from(value: ceramic_http_client::api::Commit) -> std::result::Result<Self, Self::Error> {
+        match value.value {
+            ceramic_http_client::api::CommitValue::Anchor(anchor) => Ok(Event {
+                cid: value.cid.as_ref().try_into()?,
+                value: EventValue::Anchor(Box::new(AnchorValue {
+                    id: anchor.id.as_ref().try_into()?,
+                    prev: anchor.prev.as_ref().try_into()?,
+                    proof: anchor.proof.as_ref().try_into()?,
+                    path: anchor.path,
+                    proof_block: None,
+                })),
+            }),
+            ceramic_http_client::api::CommitValue::Signed(signed) => Ok(Event {
+                cid: value.cid.as_ref().try_into()?,
+                value: EventValue::Signed(Box::new(SignedValue {
+                    jws: JwsWrap::new(signed.jws),
+                    linked_block: Some(signed.linked_block.to_vec()?),
+                    cacao_block: None,
+                })),
+            }),
+        }
+    }
+}
 
-//     fn try_from(jws: ceramic_core::Jws) -> std::result::Result<Self, Self::Error> {
-//         Ok(Self {
-//             cid: jws.cid()?,
-//             value: EventValue::Signed(Box::new(SignedValue {
-//                 jws,
-//                 linked_block: None,
-//                 cacao_block: None,
-//             })),
-//         })
-//     }
-// }
+impl TryFrom<ceramic_core::Jws> for Event {
+    type Error = anyhow::Error;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+    fn try_from(jws: ceramic_core::Jws) -> std::result::Result<Self, Self::Error> {
+        let jws = JwsWrap::new(jws);
+
+        Ok(Self {
+            cid: jws.cid()?,
+            value: EventValue::Signed(Box::new(SignedValue {
+                jws,
+                linked_block: None,
+                cacao_block: None,
+            })),
+        })
+    }
+}
+
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum EventValue {
     Signed(Box<SignedValue>),
     Anchor(Box<AnchorValue>),

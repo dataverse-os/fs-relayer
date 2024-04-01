@@ -1,6 +1,7 @@
 use crate::stream::StreamState;
-use crate::types::jws::Jws;
-use crate::types::stream_id::StreamId;
+// use ceramic_core::Jws;
+use ceramic_core::StreamId;
+use crate::types::jws::{Jws, JwsWrap};
 use crate::types::strings::Base64String;
 use crate::EventValue;
 
@@ -16,9 +17,9 @@ use super::cacao::CACAO;
 use super::ipld::IpldAs;
 use super::StreamStateApplyer;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SignedValue {
-    pub jws: Jws,
+    pub jws: JwsWrap,
     pub linked_block: Option<Vec<u8>>,
     pub cacao_block: Option<Vec<u8>>,
 }
@@ -69,7 +70,7 @@ impl SignedValue {
     }
 
     pub fn protected(&self) -> anyhow::Result<Vec<u8>> {
-        let protected = &self.jws.signatures[0].protected;
+        let protected = &self.jws.value.signatures[0].protected;
         if let Some(p) = protected {
             return p.to_vec();
         }
@@ -96,7 +97,7 @@ impl SignedValue {
     }
 
     pub fn payload_link(&self) -> anyhow::Result<Cid> {
-        Ok(Cid::try_from(self.jws.payload.to_vec()?)?)
+        Ok(Cid::try_from(self.jws.value.payload.to_vec()?)?)
     }
 
     pub fn cacao_link(&self) -> anyhow::Result<Cid> {

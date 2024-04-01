@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-use crate::types::jws::{Jws, ToCid};
-use crate::types::stream_id::{StreamId, StreamIdType};
+use crate::types::jws::{Jws, JwsWrap, ToCid};
+use ceramic_core::{StreamId, StreamIdType};
 use anyhow::{Context, Ok};
 use int_enum::IntEnum;
 use libipld::Cid;
@@ -44,7 +44,7 @@ pub struct Data {
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Content {
-    pub jws: Jws,
+    pub jws: JwsWrap,
     pub linked_block: Base64String,
     pub cacao_block: Base64String,
 }
@@ -72,25 +72,28 @@ impl TryInto<Event> for Content {
     }
 }
 
-// impl<T> TryFrom<Event> for ceramic_http_client::api::BlockData<T>
-// where
-//     T: Serialize,
-// {
-//     type Error = anyhow::Error;
+impl<T> TryFrom<Event> for ceramic_http_client::api::BlockData<T>
+where
+    T: Serialize,
+{
+    type Error = anyhow::Error;
 
-//     fn try_from(value: Event) -> Result<Self, Self::Error> {
-//         if let EventValue::Signed(signed) = value.value {
-//             return Ok(Self {
-//                 header: None,
-//                 data: None,
-//                 jws: Some(signed.jws),
-//                 linked_block: signed.linked_block.map(Base64String::from),
-//                 cacao_block: signed.cacao_block.map(Base64String::from),
-//             });
-//         }
-//         Err(anyhow::anyhow!("invalid event value"))
-//     }
-// }
+    fn try_from(value: Event) -> Result<Self, Self::Error> {
+        if let EventValue::Signed(signed) = value.value {
+            let linked_block = signed.linked_block.ok_or(anyhow::anyhow!("error"))?;
+            let cacao_block = signed.cacao_block.ok_or(anyhow::anyhow!("error"))?;
+
+            return Ok(Self {
+                header: None,
+                data: None,
+                jws: Some(signed.jws.value),
+                linked_block: Some(ceramic_core::Base64String::from(linked_block)),
+                cacao_block: Some(ceramic_core::Base64String::from(cacao_block))
+            });
+        }
+        Err(anyhow::anyhow!("invalid event value"))
+    }
+}
 
 impl TryFrom<Event> for Content {
     type Error = anyhow::Error;

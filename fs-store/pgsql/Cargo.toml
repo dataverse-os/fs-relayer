@@ -8,8 +8,7 @@ edition = "2021"
 [dependencies]
 anyhow = { workspace = true }
 async-trait = { workspace = true }
-ceramic-core = { workspace = true }
-dataverse-ceramic = { workspace = true }
+ceramic-box = { workspace = true }
 dataverse-file-types = { workspace = true }
 diesel = { workspace = true }
 int-enum = { workspace = true }

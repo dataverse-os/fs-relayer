@@ -2,8 +2,8 @@ use std::{collections::HashMap, sync::Arc};
 
 use anyhow::Result;
 use chrono::Utc;
-use dataverse_ceramic::event::{Event, EventValue, VerifyOption};
-use dataverse_ceramic::{StreamId, StreamState};
+use ceramic_box::event::{Event, EventValue, VerifyOption};
+use ceramic_box::{StreamId, StreamState};
 use dataverse_file_types::core::dapp_store;
 use dataverse_file_types::core::stream::{Stream, StreamStore};
 use int_enum::IntEnum;
@@ -14,7 +14,7 @@ use dataverse_file_types::file::index_folder::IndexFolder;
 use dataverse_file_types::file::FileModel;
 use dataverse_file_types::file::{operator::StreamFileLoader, StreamFile};
 use crate::error::FileClientError;
-use dataverse_file_types::file::client::*;
+pub use dataverse_file_types::core::client::*;
 
 pub struct Client {
     pub operator: Arc<dyn StreamFileLoader>,

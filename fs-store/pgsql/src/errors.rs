@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use ceramic_core::{Cid, StreamId};
+use ceramic_box::{Cid, StreamId};
 
 #[derive(Debug)]
 pub enum ConnectionPoolError {

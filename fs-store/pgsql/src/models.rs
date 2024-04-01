@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-use ceramic_core::{Cid, StreamId};
-use dataverse_ceramic::{
+use ceramic_box::{Cid, StreamId};
+use ceramic_box::{
 	event::{AnchorValue, SignedValue, ToCid},
 	EventValue,
 };
@@ -21,10 +21,10 @@ pub struct Event {
 	pub blocks: Vec<Option<Vec<u8>>>,
 }
 
-impl TryInto<dataverse_ceramic::Event> for Event {
+impl TryInto<ceramic_box::Event> for Event {
 	type Error = anyhow::Error;
 
-	fn try_into(self) -> anyhow::Result<dataverse_ceramic::Event> {
+	fn try_into(self) -> anyhow::Result<ceramic_box::Event> {
 		let cid = Cid::try_from(self.cid)?;
 		let value = match cid.codec() {
 			0x71 => {
@@ -41,14 +41,14 @@ impl TryInto<dataverse_ceramic::Event> for Event {
 			_ => anyhow::bail!(PgSqlEventError::UnsupportedCodecError(cid.codec())),
 		};
 
-		Ok(dataverse_ceramic::Event { cid, value })
+		Ok(ceramic_box::Event { cid, value })
 	}
 }
 
-impl TryFrom<dataverse_ceramic::Event> for Event {
+impl TryFrom<ceramic_box::Event> for Event {
 	type Error = anyhow::Error;
 
-	fn try_from(value: dataverse_ceramic::Event) -> Result<Self, Self::Error> {
+	fn try_from(value: ceramic_box::Event) -> Result<Self, Self::Error> {
 		let cid = value.genesis()?;
 		let event = Event {
 			cid: value.cid.to_string(),

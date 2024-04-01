@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use dataverse_ceramic::{commit, event::Event, StreamId, StreamState};
+use ceramic_box::{commit, event::Event, StreamId, StreamState};
 use dataverse_file_types::core::stream::StreamStore;
 use dataverse_file_types::file::{
     self, StreamFile, StreamFileLoader,

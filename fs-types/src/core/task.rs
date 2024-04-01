@@ -1,5 +1,5 @@
-use dataverse_ceramic::event::{Event, EventsUploader};
-use dataverse_ceramic::{http, Ceramic};
+use ceramic_box::event::{Event, EventsUploader};
+use ceramic_box::{http, Ceramic};
 use fang::async_trait;
 use fang::asynk::async_queue::AsyncQueueable;
 use fang::serde::{Deserialize, Serialize};

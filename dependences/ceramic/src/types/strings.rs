@@ -1,4 +1,4 @@
-use super::stream_id::StreamId;
+use ceramic_core::StreamId;
 use base64::Engine;
 use libipld::Cid;
 

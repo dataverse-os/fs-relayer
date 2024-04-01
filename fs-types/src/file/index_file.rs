@@ -2,9 +2,8 @@ use std::str::FromStr;
 
 use anyhow::Result;
 use async_std::task;
-use ceramic_core::Cid;
 use chrono::{DateTime, Utc};
-use dataverse_ceramic::{self as ceramic, StreamId};
+use ceramic_box::{self as ceramic, StreamId, Cid};
 use crate::core::dapp_store;
 use int_enum::IntEnum;
 use serde::{Deserialize, Serialize};

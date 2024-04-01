@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use ceramic_http_client::{FilterQuery, OperationFilter};
-use dataverse_ceramic::{event::EventsUploader, Ceramic, StreamId, StreamState, StreamsLoader};
+use ceramic_box::{event::EventsUploader, Ceramic, StreamId, StreamState, StreamsLoader};
 
 use crate::file::errors::StreamFileError;
 
@@ -41,7 +41,7 @@ pub trait StreamFileLoader: StreamsLoader + EventsUploader + Send + Sync {
 }
 
 #[async_trait::async_trait]
-impl StreamFileLoader for dataverse_ceramic::http::Client {
+impl StreamFileLoader for ceramic_box::http::Client {
 	async fn load_index_file_by_content_id(
 		&self,
 		ceramic: &Ceramic,

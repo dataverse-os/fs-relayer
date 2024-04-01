@@ -1,6 +1,7 @@
 use crate::event::{Event, EventsLoader, EventsUploader};
 use crate::{AnchorStatus, Ceramic, StreamState};
-use ceramic_core::{Cid, StreamId};
+use ceramic_core::{Cid};
+use ceramic_core::StreamId;
 use int_enum::IntEnum;
 
 #[async_trait::async_trait]

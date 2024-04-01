@@ -1,4 +1,3 @@
-pub mod client;
 pub mod common;
 pub mod operator;
 pub mod status;
@@ -11,17 +10,16 @@ pub mod index_file;
 pub mod index_folder;
 
 mod errors;
-mod client;
 
 pub use index_file::*;
 
 use std::fmt::Display;
 
 use anyhow::Context;
-use dataverse_ceramic::StreamState;
+use ceramic_box::StreamState;
 pub use operator::*;
 
-use ceramic_core::StreamId;
+use ceramic_box::StreamId;
 use errors::StreamFileError;
 use serde::{Deserialize, Serialize};
 use serde_json::value::Value;

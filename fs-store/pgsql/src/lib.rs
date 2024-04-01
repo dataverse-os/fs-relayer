@@ -10,9 +10,9 @@ use int_enum::IntEnum;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use ceramic_core::{Cid, StreamId};
-use dataverse_ceramic::{kubo, Ceramic, Event, EventsUploader, StreamState};
-use dataverse_ceramic::{EventsLoader, StreamLoader, StreamOperator, StreamsLoader};
+use ceramic_box::{Cid, StreamId};
+use ceramic_box::{kubo, Ceramic, Event, EventsUploader, StreamState};
+use ceramic_box::{EventsLoader, StreamLoader, StreamOperator, StreamsLoader};
 use dataverse_file_types::core::stream::{Stream, StreamStore};
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};

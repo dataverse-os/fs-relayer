@@ -1,7 +1,7 @@
 use anyhow::Context;
-use ceramic_core::{Cid, StreamId};
-use dataverse_ceramic::event::{Event, EventsLoader, EventsUploader};
-use dataverse_ceramic::Ceramic;
+use ceramic_box::{Cid, StreamId};
+use ceramic_box::event::{Event, EventsLoader, EventsUploader};
+use ceramic_box::Ceramic;
 use dataverse_file_types::core::stream::StreamStore;
 use dataverse_file_types::file::StreamFileLoader;
 

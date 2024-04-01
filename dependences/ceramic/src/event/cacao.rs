@@ -4,8 +4,7 @@ use std::collections::HashMap;
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-
-use crate::types::stream_id::StreamId;
+use crate::StreamId;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CACAO {

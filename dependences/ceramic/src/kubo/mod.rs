@@ -7,7 +7,8 @@ pub mod task;
 pub use cache::Cached;
 pub use store::Store;
 
-use ceramic_core::{Cid, StreamId};
+use ceramic_core::{Cid};
+use crate::StreamId;
 use ceramic_kubo_rpc_server::models;
 use ceramic_kubo_rpc_server::{ApiNoContext, ContextWrapperExt};
 use ceramic_kubo_rpc_server::{BlockGetPostResponse, BlockPutPostResponse};
@@ -16,6 +17,7 @@ use swagger::{AuthData, ByteArray, ContextBuilder, EmptyContext, Push, XSpanIdSt
 
 use crate::event::{self, Event, EventsLoader, EventsUploader};
 use crate::{Ceramic, StreamLoader, StreamState};
+use crate::types::jws::ToCid;
 
 use self::message::MessageUpdatePublisher;
 

@@ -5,9 +5,9 @@ use std::sync::Arc;
 use std::{path::PathBuf, str::FromStr};
 
 use anyhow::Context;
-use ceramic_core::{Cid, StreamId};
-use dataverse_ceramic::stream::StreamState;
-use dataverse_ceramic::{kubo, Ceramic, StreamLoader, StreamOperator, StreamsLoader};
+use ceramic_box::{Cid, StreamId};
+use ceramic_box::stream::StreamState;
+use ceramic_box::{kubo, Ceramic, StreamLoader, StreamOperator, StreamsLoader};
 use dataverse_file_types::core::stream::{Stream, StreamStore};
 use futures::TryStreamExt;
 use iroh::client::mem::{Doc, Iroh};
@@ -328,7 +328,7 @@ impl kubo::Store for Client {
 
 #[cfg(test)]
 mod tests {
-	use dataverse_ceramic::{event::Event, kubo};
+	use ceramic_box::{event::Event, kubo};
 
 	use super::*;
 
@@ -355,7 +355,7 @@ mod tests {
 		assert!(client.is_ok());
 		let client = client.unwrap();
 
-		let genesis = dataverse_ceramic::commit::example::genesis();
+		let genesis = ceramic_box::commit::example::genesis();
 
 		println!(
 			"extract stream_id from genesis: {:?}",
@@ -376,7 +376,7 @@ mod tests {
 		let update_at = state.content["updatedAt"].clone();
 
 		// save data commit
-		let data = dataverse_ceramic::commit::example::data();
+		let data = ceramic_box::commit::example::data();
 		let commit: Event = data.commit.try_into().unwrap();
 		stream.tip = commit.cid;
 		commits.push(commit);

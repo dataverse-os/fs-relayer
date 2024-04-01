@@ -1,4 +1,4 @@
-use ceramic_core::StreamId;
+use ceramic_box::StreamId;
 use chrono::{DateTime, Utc};
 use crate::core::dapp_store;
 use serde::{Deserialize, Serialize};
@@ -57,7 +57,7 @@ struct ActionFileProcessor {}
 impl Policy for ActionFileProcessor {
 	async fn effect_at(
 		&self,
-		state: &dataverse_ceramic::stream::StreamState,
+		state: &ceramic_box::stream::StreamState,
 	) -> anyhow::Result<bool> {
 		// check model_name is indexfile
 		let model_id = state.must_model()?;

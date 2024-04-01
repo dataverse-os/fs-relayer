@@ -12,17 +12,14 @@ anyhow = { workspace = true }
 async-std = { workspace = true }
 async-trait = { workspace = true }
 base64 = "0.21.3"
-ceramic-core = { workspace = true }
 ceramic-http-client = { workspace = true }
 chrono = { workspace = true }
-dataverse-ceramic = { workspace = true }
+ceramic-box = { workspace = true }
 diesel = { workspace = true }
 fang = { workspace = true }
 int-enum = { workspace = true }
 json-patch = { workspace = true }
 log = { workspace = true }
-openssl = "0.10.62"
-postgres-openssl = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_repr = "0.1.18"

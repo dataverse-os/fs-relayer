@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use anyhow::Context;
-use dataverse_ceramic::network::Network;
+use ceramic_box::network::Network;
 use directories::ProjectDirs;
 
 static APP_NAME: &str = "dataverse-file-relayer";

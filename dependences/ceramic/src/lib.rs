@@ -12,6 +12,8 @@ pub mod stream;
 pub mod types;
 
 pub use ceramic_core::StreamId;
+pub use ceramic_core::Cid;
+
 pub use event::commit;
 pub use event::{Event, EventValue, EventsLoader, EventsUploader};
 use serde::{Deserialize, Serialize};

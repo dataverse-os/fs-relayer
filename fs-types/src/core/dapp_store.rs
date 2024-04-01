@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 
 use anyhow::Context;
-use ceramic_core::StreamId;
-use dataverse_ceramic::Ceramic;
+use ceramic_box::{StreamId, Ceramic};
 use once_cell::sync::Lazy;
 use tokio::sync::Mutex;
 
@@ -89,7 +88,7 @@ impl ModelStore {
 			return Ok(ceramic.clone());
 		}
 
-		let chains = dataverse_ceramic::http::Client::chains(ceramic_str).await?;
+		let chains = ceramic_box::http::Client::chains(ceramic_str).await?;
 		let ceramic = Ceramic {
 			endpoint: ceramic_str.clone(),
 			network: chains.first().context(ModelStoreError::CeramicNotInNetworks)?.network(),

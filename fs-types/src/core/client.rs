@@ -1,5 +1,5 @@
-use dataverse_ceramic::event::{Event};
-use dataverse_ceramic::{StreamId, StreamState};
+use ceramic_box::event::Event;
+use ceramic_box::{StreamId, StreamState};
 
 
 #[async_trait::async_trait]

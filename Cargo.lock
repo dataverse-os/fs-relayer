@@ -1086,35 +1086,57 @@ dependencies = [
 ]
 
 [[package]]
-name = "ceramic-core"
-version = "0.9.0"
-source = "git+https://github.com/dataverse-os/rust-ceramic?branch=patch-kubo-block-put#9d0ae26bc6bf56e0e3bcd699c86355a8a65c64a8"
+name = "ceramic-box"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
  "base64 0.21.7",
- "cid 0.10.1",
+ "bytes 1.5.0",
+ "ceramic-core",
+ "ceramic-event",
+ "ceramic-http-client",
+ "ceramic-kubo-rpc-server",
+ "chrono",
+ "dag-jose",
  "did-method-key",
  "did-pkh",
+ "ethers-core",
+ "ethers-providers",
+ "expect-test",
+ "fang",
+ "futures",
+ "futures-util",
  "hex",
  "int-enum",
- "libp2p-identity",
- "minicbor",
+ "json-patch",
+ "libipld 0.16.0",
+ "log 0.4.21",
+ "lru",
  "multibase 0.9.1",
  "once_cell",
+ "postgres-openssl",
+ "primitive-types 0.12.2",
  "regex",
  "serde",
- "serde_bytes",
- "serde_ipld_dagcbor",
  "serde_json",
+ "serde_repr",
+ "sha2 0.10.8",
+ "ssh-key",
  "ssi",
+ "ssi-dids",
+ "swagger",
+ "test-log",
+ "tokio",
+ "tracing",
  "unsigned-varint",
+ "url",
 ]
 
 [[package]]
 name = "ceramic-core"
-version = "0.14.0"
-source = "git+https://github.com/ceramicnetwork/rust-ceramic?branch=main#619a6a3536f8e070369e26f5532649f679301cda"
+version = "0.9.0"
+source = "git+https://github.com/dataverse-os/rust-ceramic?branch=patch-kubo-block-put#9d0ae26bc6bf56e0e3bcd699c86355a8a65c64a8"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1143,7 +1165,7 @@ version = "0.9.0"
 source = "git+https://github.com/dataverse-os/rust-ceramic?branch=patch-kubo-block-put#9d0ae26bc6bf56e0e3bcd699c86355a8a65c64a8"
 dependencies = [
  "anyhow",
- "ceramic-core 0.9.0",
+ "ceramic-core",
  "multihash 0.18.1",
  "once_cell",
  "rand 0.8.5",
@@ -1898,72 +1920,27 @@ dependencies = [
 ]
 
 [[package]]
-name = "dataverse-ceramic"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64 0.21.7",
- "bytes 1.5.0",
- "ceramic-core 0.9.0",
- "ceramic-http-client",
- "ceramic-kubo-rpc-server",
- "chrono",
- "dag-jose",
- "did-method-key",
- "did-pkh",
- "ethers-core",
- "ethers-providers",
- "expect-test",
- "fang",
- "futures",
- "futures-util",
- "hex",
- "int-enum",
- "json-patch",
- "libipld 0.16.0",
- "log 0.4.21",
- "lru",
- "multibase 0.9.1",
- "once_cell",
- "postgres-openssl",
- "primitive-types 0.12.2",
- "regex",
- "serde",
- "serde_json",
- "serde_repr",
- "sha2 0.10.8",
- "ssh-key",
- "ssi",
- "ssi-dids",
- "swagger",
- "test-log",
- "tokio",
- "tracing",
- "unsigned-varint",
- "url",
-]
-
-[[package]]
 name = "dataverse-file-relayer"
 version = "0.1.0"
 dependencies = [
  "actix-web",
  "anyhow",
  "async-trait",
- "ceramic-core 0.14.0",
+ "ceramic-box",
  "chrono",
  "confy",
- "dataverse-ceramic",
  "dataverse-file-types",
  "dataverse-iroh-store",
  "dataverse-pgsql-store",
  "derive_more 0.99.17",
  "directories 5.0.1",
  "env_logger 0.10.2",
+ "fang",
  "futures",
  "int-enum",
  "log 0.4.21",
+ "openssl",
+ "postgres-openssl",
  "serde",
  "serde_json",
  "tokio",
@@ -1980,19 +1957,16 @@ dependencies = [
  "async-std",
  "async-trait",
  "base64 0.21.7",
- "ceramic-core 0.14.0",
+ "ceramic-box",
  "ceramic-http-client",
  "chrono",
  "dapp-table-client",
- "dataverse-ceramic",
  "diesel",
  "fang",
  "int-enum",
  "json-patch",
  "log 0.4.21",
  "once_cell",
- "openssl",
- "postgres-openssl",
  "serde",
  "serde_json",
  "serde_repr",
@@ -2007,8 +1981,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
- "ceramic-core 0.14.0",
- "dataverse-ceramic",
+ "ceramic-box",
  "dataverse-file-types",
  "futures",
  "iroh",
@@ -2028,8 +2001,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
- "ceramic-core 0.14.0",
- "dataverse-ceramic",
+ "ceramic-box",
  "dataverse-file-types",
  "diesel",
  "int-enum",
@@ -3437,12 +3409,6 @@ dependencies = [
  "tokio-util",
  "tracing",
 ]
-
-[[package]]
-name = "half"
-version = "1.8.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b43ede17f21864e81be2fa654110bf1e793774238d86ef8555c37e6519c0403"
 
 [[package]]
 name = "hashbrown"
@@ -5128,7 +5094,6 @@ version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d7005aaf257a59ff4de471a9d5538ec868a21586534fff7f85dd97d4043a6139"
 dependencies = [
- "half",
  "minicbor-derive",
 ]
 

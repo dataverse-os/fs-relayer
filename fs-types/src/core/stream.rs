@@ -1,6 +1,6 @@
-use ceramic_core::{Cid, StreamId};
-use dataverse_ceramic::event::Event;
-use dataverse_ceramic::StreamState;
+use ceramic_box::Cid;
+use ceramic_box::event::Event;
+use ceramic_box::{StreamState, StreamId};
 use int_enum::IntEnum;
 use serde::{Deserialize, Serialize};
 

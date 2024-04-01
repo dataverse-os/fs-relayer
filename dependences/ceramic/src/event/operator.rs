@@ -1,5 +1,5 @@
-use ceramic_core::{Cid, StreamId};
-
+use ceramic_core::{Cid};
+use ceramic_core::StreamId;
 use crate::{event::Event, Ceramic};
 
 #[async_trait::async_trait]

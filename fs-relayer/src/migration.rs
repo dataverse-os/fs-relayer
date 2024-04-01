@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use anyhow::Context;
-use dataverse_ceramic::StreamOperator;
+use ceramic_box::StreamOperator;
 use dataverse_file_types::core::{dapp_store, stream::StreamStore};
 
 use crate::{config::Config, iroh_store, pgsql_store};

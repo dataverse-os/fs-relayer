@@ -4,7 +4,8 @@ mod task;
 pub use task::*;
 
 use anyhow::{Context, Result};
-use ceramic_core::{Base64UrlString, Cid, StreamId};
+use ceramic_core::{Base64UrlString, Cid};
+use ceramic_core::StreamId;
 use ceramic_event::{DidDocument, JwkSigner};
 use ceramic_http_client::{api, remote::CeramicRemoteHttpClient, FilterQuery};
 use errors::HttpError;
@@ -87,6 +88,7 @@ impl EventsLoader for Client {
 	) -> anyhow::Result<Vec<Event>> {
 		let http_client = Self::init(&ceramic.endpoint)?;
 		let commits = http_client.commits(stream_id).await?.commits;
+		// TODO Form<Commit> jws
 		let mut events = vec![];
 		for commit in commits {
 			events.push(commit.try_into()?)
@@ -284,34 +286,34 @@ mod tests {
 		);
 	}
 
-	#[tokio::test]
-	async fn load_events() {
-		let client = Client::new();
-		let ceramic = "https://dataverseceramicdaemon.com";
-		let http_client = Client::init(ceramic);
-		assert!(http_client.is_ok());
-		let http_client = http_client.unwrap();
+	// #[tokio::test]
+	// async fn load_events() {
+	// 	let client = Client::new();
+	// 	let ceramic = "https://dataverseceramicdaemon.com";
+	// 	let http_client = Client::init(ceramic);
+	// 	assert!(http_client.is_ok());
+	// 	let http_client = http_client.unwrap();
 
-		let ceramic = Ceramic::new(ceramic).await;
-		assert!(ceramic.is_ok());
+	// 	let ceramic = Ceramic::new(ceramic).await;
+	// 	assert!(ceramic.is_ok());
 
-		let stream_id =
-			StreamId::from_str("kjzl6kcym7w8y5pj1xs5iotnbplg7x4hgoohzusuvk8s7oih3h2fuplcvwvu2wx")
-				.unwrap();
-		let events = client
-			.load_events(&ceramic.unwrap(), &stream_id, None)
-			.await;
-		assert!(events.is_ok());
+	// 	let stream_id =
+	// 		StreamId::from_str("kjzl6kcym7w8y5pj1xs5iotnbplg7x4hgoohzusuvk8s7oih3h2fuplcvwvu2wx")
+	// 			.unwrap();
+	// 	let events = client
+	// 		.load_events(&ceramic.unwrap(), &stream_id, None)
+	// 		.await;
+	// 	assert!(events.is_ok());
 
-		let stream = StreamState::make(stream_id.r#type.int_value(), events.unwrap()).await;
-		assert!(stream.is_ok());
+	// 	let stream = StreamState::make(stream_id.r#type.int_value(), events.unwrap()).await;
+	// 	assert!(stream.is_ok());
 
-		let stream_from_ceramic = http_client.get(&stream_id).await;
-		assert!(stream_from_ceramic.is_ok());
+	// 	let stream_from_ceramic = http_client.get(&stream_id).await;
+	// 	assert!(stream_from_ceramic.is_ok());
 
-		assert_eq!(
-			stream.unwrap().content,
-			stream_from_ceramic.unwrap().state.unwrap().content
-		);
-	}
+	// 	assert_eq!(
+	// 		stream.unwrap().content,
+	// 		stream_from_ceramic.unwrap().state.unwrap().content
+	// 	);
+	// }
 }

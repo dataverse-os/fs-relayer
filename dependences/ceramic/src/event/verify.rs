@@ -1,5 +1,5 @@
 use super::{Event, EventValue};
-use crate::types::stream_id::StreamId;
+use ceramic_core::StreamId;
 use chrono::{DateTime, Utc};
 
 pub enum VerifyOption {

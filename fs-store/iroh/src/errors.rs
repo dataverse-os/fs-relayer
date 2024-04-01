@@ -1,4 +1,4 @@
-use ceramic_core::StreamId;
+use ceramic_box::StreamId;
 use std::path::PathBuf;
 
 #[derive(Debug)]
