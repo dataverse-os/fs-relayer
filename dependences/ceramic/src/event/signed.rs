@@ -1,6 +1,5 @@
 use crate::stream::StreamState;
-// use ceramic_core::Jws;
-use crate::types::jws::{Jws, JwsWrap};
+use crate::types::jws::JwsWrap;
 use crate::types::strings::Base64String;
 use crate::EventValue;
 use ceramic_core::StreamId;

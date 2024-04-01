@@ -57,97 +57,12 @@ impl From<ceramic_core::Jws> for JwsWrap {
     }
 }
 
-/// A JWS object
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Jws {
-    /// Link to CID that contains encoded data
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub link: Option<MultiBase32String>,
-    /// Encoded data
-    pub payload: Base64UrlString,
-    /// The signatures of the JWS
-    pub signatures: Vec<JwsSignature>,
-}
-
-impl Jws {
-    /// Creates a new JWS object
-    pub async fn for_data<T: Serialize>(signer: &impl Signer, input: &T) -> anyhow::Result<Self> {
-        let input = serde_json::to_vec(input)?;
-        let input = Base64UrlString::from(input);
-        Jws::new(signer, input, None).await
-    }
-
-    /// Creates a new JWS object for a cid
-    pub async fn for_cid(signer: &impl Signer, cid: &Cid) -> anyhow::Result<Self> {
-        let cid_str = Base64UrlString::from_cid(cid);
-        let link = MultiBase32String::try_from(cid)?;
-        Jws::new(signer, cid_str, Some(link)).await
-    }
-
-    /// Creates a new JWS from a payload that has already been serialized to Base64UrlString
-    pub async fn new(
-        signer: &impl Signer,
-        input: Base64UrlString,
-        link: Option<MultiBase32String>,
-    ) -> anyhow::Result<Self> {
-        let alg = signer.algorithm();
-        let header = ssi::jws::Header {
-            algorithm: alg,
-            type_: Some("JWT".to_string()),
-            key_id: Some(signer.id().id.clone()),
-            ..Default::default()
-        };
-        // creates compact signature of protected.signature
-        let header_str = Base64String::from(serde_json::to_vec(&header)?);
-        let signing_input = format!("{}.{}", header_str.as_ref(), input.as_ref());
-        let signed = signer.sign(signing_input.as_bytes()).await?;
-        Ok(Self {
-            link,
-            payload: input,
-            signatures: vec![JwsSignature {
-                protected: Some(header_str),
-                signature: signed,
-            }],
-        })
-    }
-}
-
-impl TryFrom<Vec<u8>> for Jws {
-    type Error = anyhow::Error;
-
-    fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
-        let jws = DagJoseCodec.decode::<JsonWebSignature>(&value)?;
-        jws.try_into()
-    }
-}
-
 impl TryFrom<Vec<u8>> for JwsWrap {
     type Error = anyhow::Error;
 
     fn try_from(value: Vec<u8>) -> Result<Self, Self::Error> {
         let jws = DagJoseCodec.decode::<JsonWebSignature>(&value)?;
         jws.try_into()
-    }
-}
-
-impl TryFrom<JsonWebSignature> for Jws {
-    type Error = anyhow::Error;
-
-    fn try_from(value: JsonWebSignature) -> Result<Self, Self::Error> {
-        let link = MultiBase32String::try_from(&value.link)?;
-        let jws = crate::types::jws::Jws {
-            link: Some(link),
-            payload: value.payload.into(),
-            signatures: value
-                .signatures
-                .into_iter()
-                .map(|sig| crate::types::jws::JwsSignature {
-                    protected: sig.protected.map(Into::into),
-                    signature: sig.signature.into(),
-                })
-                .collect::<Vec<_>>(),
-        };
-        Ok(jws)
     }
 }
 
@@ -175,31 +90,6 @@ impl TryFrom<JsonWebSignature> for JwsWrap {
     }
 }
 
-impl TryInto<JsonWebSignature> for Jws {
-    type Error = anyhow::Error;
-
-    fn try_into(self) -> Result<JsonWebSignature, Self::Error> {
-        let link = match self.link.clone() {
-            Some(val) => val,
-            None => anyhow::bail!(JwsError::NoLink),
-        };
-        let signatures = self
-            .signatures
-            .iter()
-            .map(|x| dag_jose::Signature {
-                header: Default::default(),
-                protected: x.protected.as_ref().map(|s| s.to_string()),
-                signature: x.signature.to_string(),
-            })
-            .collect();
-
-        Ok(JsonWebSignature {
-            payload: self.payload.to_string(),
-            signatures,
-            link: Cid::from_str(link.as_ref())?,
-        })
-    }
-}
 
 impl TryInto<JsonWebSignature> for JwsWrap {
     type Error = anyhow::Error;
@@ -234,17 +124,6 @@ pub trait ToCid {
     fn to_vec(&self) -> anyhow::Result<Vec<u8>>;
 }
 
-impl ToCid for crate::types::jws::Jws {
-    fn cid(&self) -> anyhow::Result<Cid> {
-        let jws: JsonWebSignature = self.clone().try_into()?;
-        jws.cid()
-    }
-
-    fn to_vec(&self) -> anyhow::Result<Vec<u8>> {
-        let jws: JsonWebSignature = self.clone().try_into()?;
-        jws.to_vec()
-    }
-}
 
 impl ToCid for JwsWrap {
     fn cid(&self) -> anyhow::Result<Cid> {
@@ -308,7 +187,7 @@ mod tests {
         assert!(jws.is_ok());
         let jws = jws.unwrap();
 
-        let jws = TryInto::<Jws>::try_into(jws);
+        let jws = TryInto::<JwsWrap>::try_into(jws);
         assert!(jws.is_ok());
         let jws = jws.unwrap();
 

@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use crate::types::jws::{Jws, JwsWrap, ToCid};
+use crate::types::jws::{JwsWrap, ToCid};
 use anyhow::{Context, Ok};
 use ceramic_core::{StreamId, StreamIdType};
 use int_enum::IntEnum;
