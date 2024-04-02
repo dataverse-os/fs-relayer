@@ -46,7 +46,7 @@ pub fn new(base_path: &str) -> Client {
     Box::new(client.with_context(context))
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait CidLoader {
     async fn load_cid(&self, cid: &Cid) -> anyhow::Result<Vec<u8>>;
 
@@ -77,7 +77,7 @@ pub trait CidLoader {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl CidLoader for Client {
     async fn load_cid(&self, cid: &Cid) -> anyhow::Result<Vec<u8>> {
         let timeout = Some("2s".into());
@@ -100,12 +100,12 @@ impl CidLoader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait BlockUploader {
     async fn block_upload(&self, cid: Cid, block: Vec<u8>) -> anyhow::Result<()>;
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl BlockUploader for Client {
     async fn block_upload(&self, _cid: Cid, block: Vec<u8>) -> anyhow::Result<()> {
         let mhtype = Some(models::Multihash::Sha2256);
@@ -125,7 +125,7 @@ impl BlockUploader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl<T: BlockUploader + AnchorRuester + MessageUpdatePublisher + Send + Sync> EventsUploader for T {
     async fn upload_event(
         &self,
@@ -179,7 +179,7 @@ impl<T: BlockUploader + AnchorRuester + MessageUpdatePublisher + Send + Sync> Ev
 
 impl StreamLoader for Client {}
 
-#[async_trait::async_trait]
+#[async_trait]
 impl<T: CidLoader + Send + Sync> EventsLoader for T {
     async fn load_events(
         &self,
@@ -218,7 +218,7 @@ impl<T: CidLoader + Send + Sync> EventsLoader for T {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait AnchorRuester {
     async fn request_anchor(
         &self,
@@ -228,7 +228,7 @@ pub trait AnchorRuester {
     ) -> anyhow::Result<()>;
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl AnchorRuester for Client {
     async fn request_anchor(
         &self,

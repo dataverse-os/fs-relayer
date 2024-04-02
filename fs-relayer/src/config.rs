@@ -32,29 +32,27 @@ pub struct IrohConfig {
     streams: String,
 }
 
-impl Into<dataverse_iroh_store::KeySet> for IrohConfig {
-    fn into(self) -> dataverse_iroh_store::KeySet {
+impl From<IrohConfig> for dataverse_iroh_store::KeySet {
+    fn from(val: IrohConfig) -> Self {
         dataverse_iroh_store::KeySet {
-            author: self.author,
-            model: self.model,
-            streams: self.streams,
+            author: val.author,
+            model: val.model,
+            streams: val.streams,
         }
     }
 }
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(rename_all = "lowercase")]
+#[derive(Default)]
 pub enum IndexModels {
     None,
+    #[default]
     All,
     Dapps(Vec<uuid::Uuid>),
 }
 
-impl Default for IndexModels {
-    fn default() -> Self {
-        IndexModels::All
-    }
-}
+
 
 impl Config {
     pub fn load() -> anyhow::Result<Self> {

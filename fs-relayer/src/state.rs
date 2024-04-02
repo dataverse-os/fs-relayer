@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::client::*;
 use ceramic_box::{commit, event::Event, StreamId, StreamState};
 use dataverse_file_types::core::stream::StreamStore;
-use dataverse_file_types::file::{self, StreamFile, StreamFileLoader};
+use dataverse_file_types::file::{StreamFile, StreamFileLoader};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
@@ -52,7 +52,7 @@ impl AppState {
         stream_id: &StreamId,
     ) -> anyhow::Result<StreamStateResponse> {
         self.file_client
-            .load_stream(&dapp_id, &stream_id)
+            .load_stream(dapp_id, stream_id)
             .await?
             .try_into()
     }
@@ -62,7 +62,7 @@ impl AppState {
         dapp_id: &uuid::Uuid,
         stream_id: &StreamId,
     ) -> anyhow::Result<StreamFile> {
-        self.file_client.load_file(&dapp_id, &stream_id).await
+        self.file_client.load_file(dapp_id, stream_id).await
     }
 
     pub async fn load_files(
@@ -72,7 +72,7 @@ impl AppState {
         options: Vec<LoadFilesOption>,
     ) -> anyhow::Result<Vec<StreamFile>> {
         self.file_client
-            .load_files(account, &model_id, options)
+            .load_files(account, model_id, options)
             .await
     }
 }

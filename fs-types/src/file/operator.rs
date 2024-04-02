@@ -7,7 +7,7 @@ use crate::file::errors::StreamFileError;
 
 use super::index_file::IndexFile;
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait StreamFileLoader: StreamsLoader + EventsUploader + Send + Sync {
     async fn load_index_file_by_content_id(
         &self,
@@ -40,7 +40,7 @@ pub trait StreamFileLoader: StreamsLoader + EventsUploader + Send + Sync {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamFileLoader for ceramic_box::http::Client {
     async fn load_index_file_by_content_id(
         &self,

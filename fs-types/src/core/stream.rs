@@ -51,7 +51,7 @@ impl Stream {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait StreamStore: Sync + Send {
     async fn save_stream(&self, stream: &Stream) -> anyhow::Result<()>;
     async fn load_stream(&self, stream_id: &StreamId) -> anyhow::Result<Option<Stream>>;

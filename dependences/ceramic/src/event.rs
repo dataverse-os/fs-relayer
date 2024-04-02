@@ -13,7 +13,6 @@ pub use self::operator::*;
 pub use self::signed::*;
 pub use self::verify::*;
 use crate::stream::{LogType, StreamState};
-use crate::types::jws::JwsWrap;
 pub use crate::types::jws::ToCid;
 use anyhow::{Context, Result};
 use ceramic_http_client::api::StateLog;

@@ -10,7 +10,7 @@ use crate::Client;
 
 impl StreamFileLoader for Client {}
 
-#[async_trait::async_trait]
+#[async_trait]
 impl EventsUploader for Client {
     async fn upload_event(
         &self,
@@ -22,7 +22,7 @@ impl EventsUploader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl EventsLoader for Client {
     async fn load_events(
         &self,

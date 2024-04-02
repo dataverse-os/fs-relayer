@@ -41,7 +41,7 @@ impl Cached {
 
 impl StreamLoader for Cached {}
 
-#[async_trait::async_trait]
+#[async_trait]
 impl CidLoader for Cached {
     async fn load_cid(&self, cid: &Cid) -> anyhow::Result<Vec<u8>> {
         let data_opt;
@@ -63,7 +63,7 @@ impl CidLoader for Cached {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl BlockUploader for Cached {
     async fn block_upload(&self, cid: Cid, block: Vec<u8>) -> anyhow::Result<()> {
         self.cache.lock().await.put(cid, block.clone());
@@ -75,7 +75,7 @@ impl BlockUploader for Cached {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl MessagePublisher for Cached {
     async fn publish_message(&self, topic: &str, msg: Vec<u8>) -> anyhow::Result<()> {
         let task = UpdateMessagePublishHandler {
@@ -89,7 +89,7 @@ impl MessagePublisher for Cached {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl AnchorRuester for Cached {
     async fn request_anchor(
         &self,

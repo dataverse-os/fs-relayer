@@ -9,7 +9,7 @@ use serde_json::Value;
 
 use crate::error::FilePolicyError;
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait Policy: Send + Sync {
     async fn effect_at(&self, _state: &ceramic::StreamState) -> anyhow::Result<bool> {
         Ok(false)
@@ -85,14 +85,14 @@ impl<T: EventsLoader + Sync> PolicyStreamLoader for T {
 
 static mut POLICIES: Vec<Box<dyn Policy>> = vec![];
 
-#[async_trait::async_trait]
+#[async_trait]
 trait PolicyProcessor {
     fn register_policy(policy: Box<dyn Policy>);
 
     async fn validate_patch(&self, data: &Value, patches: Patch) -> anyhow::Result<()>;
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl PolicyProcessor for dyn Policy {
     fn register_policy(policy: Box<dyn Policy>) {
         unsafe {

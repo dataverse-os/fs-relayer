@@ -1,7 +1,6 @@
 pub mod commit_id;
 pub mod operator;
 pub mod patch;
-// pub mod stream_id;
 
 use super::commit_id::CommitId;
 use crate::event::{Event, VerifyOption};

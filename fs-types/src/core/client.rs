@@ -1,7 +1,7 @@
 use ceramic_box::event::Event;
 use ceramic_box::{StreamId, StreamState};
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait StreamFileTrait {
     async fn load_file(
         &self,
@@ -28,7 +28,7 @@ pub enum LoadFilesOption {
     None,
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait StreamEventSaver {
     async fn save_event(
         &self,

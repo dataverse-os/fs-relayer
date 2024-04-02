@@ -78,7 +78,7 @@ impl Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl EventsLoader for Client {
     async fn load_events(
         &self,
@@ -97,7 +97,7 @@ impl EventsLoader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl EventsUploader for Client {
     async fn upload_event(
         &self,
@@ -140,7 +140,7 @@ impl EventsUploader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamLoader for Client {
     async fn load_stream_state(
         &self,
@@ -158,7 +158,7 @@ impl StreamLoader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamsLoader for Client {
     async fn load_stream_states(
         &self,
@@ -170,7 +170,7 @@ impl StreamsLoader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamAnchorRequester for Client {
     async fn request_anchor(
         &self,
@@ -208,7 +208,7 @@ impl NullSigner {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl ceramic_http_client::ceramic_event::Signer for NullSigner {
     fn algorithm(&self) -> Algorithm {
         Algorithm::EdDSA

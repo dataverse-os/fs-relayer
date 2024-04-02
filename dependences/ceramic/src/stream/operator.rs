@@ -4,12 +4,12 @@ use ceramic_core::Cid;
 use ceramic_core::StreamId;
 use int_enum::IntEnum;
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait StreamOperator: StreamLoader + EventsUploader + Send + Sync {}
 
 impl<T: StreamLoader + EventsUploader> StreamOperator for T {}
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait StreamsLoader: StreamLoader {
     async fn load_stream_states(
         &self,
@@ -19,7 +19,7 @@ pub trait StreamsLoader: StreamLoader {
     ) -> anyhow::Result<Vec<StreamState>>;
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait StreamLoader: EventsLoader + Sync + Send {
     async fn load_stream_state(
         &self,
@@ -32,12 +32,12 @@ pub trait StreamLoader: EventsLoader + Sync + Send {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait StreamStateSaver {
     async fn save_stream_state(&self, state: &StreamState) -> anyhow::Result<()>;
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait StreamAnchorRequester {
     async fn request_anchor(
         &self,
@@ -60,7 +60,7 @@ impl<T: StreamLoader> CachedStreamLoader<T> {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl<T: StreamLoader + Send + Sync> EventsLoader for CachedStreamLoader<T> {
     async fn load_events(
         &self,
@@ -72,7 +72,7 @@ impl<T: StreamLoader + Send + Sync> EventsLoader for CachedStreamLoader<T> {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl<T: StreamLoader + Send + Sync> StreamLoader for CachedStreamLoader<T> {
     async fn load_stream_state(
         &self,
@@ -93,7 +93,7 @@ impl<T: StreamLoader + Send + Sync> StreamLoader for CachedStreamLoader<T> {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl<T: StreamsLoader + Send + Sync> StreamsLoader for CachedStreamLoader<T> {
     async fn load_stream_states(
         &self,

@@ -8,7 +8,7 @@ use crate::{config::Config, iroh_store, pgsql_store};
 
 pub async fn migration(cfg: &Config, operator: Arc<dyn StreamOperator>) -> anyhow::Result<()> {
     if let Ok(migration) = std::env::var("MIGRATION") {
-        let split: Vec<_> = migration.split(",").collect();
+        let split: Vec<_> = migration.split(',').collect();
         if split.iter().any(|&s| s == "stream_store") {
             let pgsql_store = pgsql_store(cfg, operator.clone()).await?;
             let iroh_store = iroh_store(cfg, operator.clone()).await?;

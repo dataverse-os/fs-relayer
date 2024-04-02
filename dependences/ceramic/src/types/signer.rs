@@ -3,7 +3,7 @@ use ssi::jwk::Algorithm;
 use super::{jwk::Jwk, strings::*, DidDocument};
 
 /// Sign bytes for an id and algorithm
-#[async_trait::async_trait]
+#[async_trait]
 pub trait Signer {
     /// Algorithm used by signer
     fn algorithm(&self) -> Algorithm;
@@ -31,7 +31,7 @@ impl JwkSigner {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl Signer for JwkSigner {
     fn algorithm(&self) -> Algorithm {
         Algorithm::EdDSA

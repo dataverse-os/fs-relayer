@@ -1,6 +1,6 @@
 use ceramic_core::{Cid, StreamId};
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait Store: Sync + Send {
     async fn get(
         &self,

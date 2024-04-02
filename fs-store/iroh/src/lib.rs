@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate async_trait;
+
 mod errors;
 pub mod file;
 
@@ -189,7 +192,7 @@ impl Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamStore for Client {
     async fn list_all_streams(&self) -> anyhow::Result<Vec<Stream>> {
         let mut result = Vec::new();
@@ -237,7 +240,7 @@ impl StreamStore for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamsLoader for Client {
     async fn load_stream_states(
         &self,
@@ -262,7 +265,7 @@ impl StreamsLoader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamLoader for Client {
     async fn load_stream_state(
         &self,
@@ -286,7 +289,7 @@ impl StreamLoader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl kubo::Store for Client {
     async fn get(
         &self,

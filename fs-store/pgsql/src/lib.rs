@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate async_trait;
+
 pub mod errors;
 pub mod models;
 pub mod schema;
@@ -108,7 +111,7 @@ impl Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamStore for Client {
     async fn list_all_streams(&self) -> anyhow::Result<Vec<Stream>> {
         let conn = &mut self.pool.get()?;
@@ -150,7 +153,7 @@ impl StreamStore for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl kubo::Store for Client {
     async fn get(
         &self,
@@ -196,7 +199,7 @@ impl kubo::Store for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamLoader for Client {
     async fn load_stream_state(
         &self,
@@ -216,7 +219,7 @@ impl StreamLoader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamsLoader for Client {
     async fn load_stream_states(
         &self,
@@ -246,7 +249,7 @@ impl StreamsLoader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl EventsLoader for Client {
     async fn load_events(
         &self,
@@ -271,7 +274,7 @@ impl EventsLoader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamFileLoader for Client {
     async fn load_index_file_by_content_id(
         &self,
@@ -311,7 +314,7 @@ impl StreamFileLoader for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl EventsUploader for Client {
     async fn upload_event(
         &self,

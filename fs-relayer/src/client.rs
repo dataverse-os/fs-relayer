@@ -64,7 +64,7 @@ impl Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamFileTrait for Client {
     async fn load_file(&self, dapp_id: &uuid::Uuid, stream_id: &StreamId) -> Result<StreamFile> {
         let ceramic = dapp_store::get_dapp_ceramic(dapp_id).await?;
@@ -293,7 +293,7 @@ impl StreamFileTrait for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl StreamEventSaver for Client {
     async fn save_event(
         &self,
@@ -348,7 +348,7 @@ impl StreamEventSaver for Client {
 
                 stream = Stream {
                     model: Some(model),
-                    account: state.controllers().first().map(Clone::clone),
+                    account: state.controllers().first().cloned(),
                     tip: event.cid,
                     content: state.content.clone(),
                     ..stream

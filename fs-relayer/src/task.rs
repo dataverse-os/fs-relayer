@@ -35,5 +35,5 @@ pub async fn task_queue(cfg: &Config) -> anyhow::Result<Queue> {
     let mut pool = fs_task::build_pool(queue.clone(), cfg.queue_worker);
     tracing::info!("starting queue");
     pool.start().await;
-    return Ok(queue);
+    Ok(queue)
 }

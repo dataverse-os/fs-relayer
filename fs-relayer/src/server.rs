@@ -1,25 +1,16 @@
-use crate::migration::migration;
-use crate::{config::Config, response::JsonResponse};
+use crate::response::JsonResponse;
 use anyhow::Context;
 use dataverse_file_types::core::dapp_store::get_model_by_name;
 use serde_json::Value;
 
 use std::net::SocketAddrV4;
-use std::{str::FromStr, sync::Arc};
+use std::str::FromStr;
 
-use crate::state::*;
-use crate::task as fs_task;
 use actix_web::{get, post, put};
 use actix_web::{http::header, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
-use ceramic_box::kubo::message::MessageSubscriber;
-use ceramic_box::network::Network;
-use ceramic_box::{commit, kubo, StreamId};
+use ceramic_box::{commit, StreamId};
 use dataverse_file_types::core::client::LoadFilesOption;
-use futures::future;
 use serde::Deserialize;
-use tokio::sync::Mutex;
-use tokio::task::JoinHandle;
-use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[derive(Deserialize)]
 struct LoadFileQuery {
@@ -113,16 +104,16 @@ async fn post_load_streams(
 
     if let (Some(stream_ids_str), Some(dapp_id)) = (&query.stream_ids, &query.dapp_id) {
         let mut stream_ids = Vec::new();
-        for stream_id_str in stream_ids_str.split(",") {
+        for stream_id_str in stream_ids_str.split(',') {
             match StreamId::from_str(stream_id_str).context("invalid stream id") {
                 Ok(stream_id) => stream_ids.push(stream_id),
                 Err(err) => return HttpResponse::BadRequest().json_error(err.to_string()),
             };
         }
-        return load_streams_by_stream_ids(state, stream_ids.clone(), dapp_id.clone()).await;
+        return load_streams_by_stream_ids(state, stream_ids.clone(), *dapp_id).await;
     }
 
-    return HttpResponse::BadRequest().json_error("invalid query".to_string());
+    HttpResponse::BadRequest().json_error("invalid query".to_string())
 }
 
 #[get("/dataverse/streams")]
@@ -137,16 +128,16 @@ async fn get_load_streams(
 
     if let (Some(stream_ids_str), Some(dapp_id)) = (&query.stream_ids, &query.dapp_id) {
         let mut stream_ids = Vec::new();
-        for stream_id_str in stream_ids_str.split(",") {
+        for stream_id_str in stream_ids_str.split(',') {
             match StreamId::from_str(stream_id_str).context("invalid stream id") {
                 Ok(stream_id) => stream_ids.push(stream_id),
                 Err(err) => return HttpResponse::BadRequest().json_error(err.to_string()),
             };
         }
-        return load_streams_by_stream_ids(state, stream_ids.clone(), dapp_id.clone()).await;
+        return load_streams_by_stream_ids(state, stream_ids.clone(), *dapp_id).await;
     }
 
-    return HttpResponse::BadRequest().json_error("invalid query".to_string());
+    HttpResponse::BadRequest().json_error("invalid query".to_string())
 }
 
 async fn load_streams_by_model_id(
@@ -271,5 +262,5 @@ pub fn web_server(
     .run();
 
     let web = tokio::spawn(async { server.await.context("server error") });
-    return Ok(web);
+    Ok(web)
 }

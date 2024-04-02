@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate async_trait;
+
 mod client;
 mod config;
 mod error;
@@ -7,7 +10,7 @@ mod server;
 mod state;
 mod task;
 
-use crate::{config::Config, response::JsonResponse};
+use crate::config::Config;
 use anyhow::Context;
 
 use migration::migration;
@@ -19,7 +22,7 @@ use crate::task as fs_task;
 
 use ceramic_box::kubo::message::MessageSubscriber;
 use ceramic_box::network::Network;
-use ceramic_box::{commit, kubo, StreamId, StreamOperator};
+use ceramic_box::{kubo, StreamOperator};
 
 use dataverse_file_types::core::stream::StreamStore;
 use dataverse_file_types::file::StreamFileLoader;

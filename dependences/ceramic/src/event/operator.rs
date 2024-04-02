@@ -2,7 +2,7 @@ use crate::{event::Event, Ceramic};
 use ceramic_core::Cid;
 use ceramic_core::StreamId;
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait EventsLoader: Sync + Send {
     async fn load_events(
         &self,
@@ -12,7 +12,7 @@ pub trait EventsLoader: Sync + Send {
     ) -> anyhow::Result<Vec<Event>>;
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait EventsUploader {
     async fn upload_event(
         &self,

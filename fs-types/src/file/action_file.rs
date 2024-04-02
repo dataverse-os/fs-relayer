@@ -53,7 +53,7 @@ pub enum ActionType {
 
 struct ActionFileProcessor {}
 
-#[async_trait::async_trait]
+#[async_trait]
 impl Policy for ActionFileProcessor {
     async fn effect_at(&self, state: &ceramic_box::stream::StreamState) -> anyhow::Result<bool> {
         // check model_name is indexfile

@@ -66,7 +66,7 @@ struct ModelState {
     dapp_id: uuid::Uuid,
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl Policy for IndexFileProcessor {
     async fn effect_at(&self, state: &ceramic::StreamState) -> Result<bool> {
         // check model_name is indexfile

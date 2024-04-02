@@ -15,7 +15,7 @@ use crate::{network::Network, Ceramic};
 
 use super::{pubsub::Message, store, Client};
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait MessageSubscriber: MessageResponsePublisher {
     async fn subscribe(&self, store: Arc<dyn store::Store>, network: Network)
         -> anyhow::Result<()>;
@@ -107,7 +107,7 @@ pub trait MessageSubscriber: MessageResponsePublisher {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl MessageSubscriber for Client {
     async fn subscribe(
         &self,
@@ -138,12 +138,12 @@ impl MessageSubscriber for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait MessagePublisher {
     async fn publish_message(&self, topic: &str, msg: Vec<u8>) -> anyhow::Result<()>;
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl MessagePublisher for Client {
     async fn publish_message(&self, topic: &str, msg: Vec<u8>) -> anyhow::Result<()> {
         let en_topic = multibase::encode(multibase::Base::Base64Url, topic);
@@ -159,7 +159,7 @@ impl MessagePublisher for Client {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait MessageUpdatePublisher {
     async fn publish_update(
         &self,
@@ -170,7 +170,7 @@ pub trait MessageUpdatePublisher {
     ) -> anyhow::Result<()>;
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl<T: MessagePublisher + Send + Sync> MessageUpdatePublisher for T {
     async fn publish_update(
         &self,
@@ -192,7 +192,7 @@ impl<T: MessagePublisher + Send + Sync> MessageUpdatePublisher for T {
     }
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait MessageResponsePublisher {
     async fn publish_response(
         &self,
@@ -203,7 +203,7 @@ pub trait MessageResponsePublisher {
     ) -> anyhow::Result<()>;
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl<T: MessagePublisher + Send + Sync> MessageResponsePublisher for T {
     async fn publish_response(
         &self,
@@ -241,12 +241,12 @@ pub struct MessageQuery {
     pub stream: String,
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait TipQueryer {
     async fn query_last_tip(&self, network: Network, stream_id: &StreamId) -> anyhow::Result<()>;
 }
 
-#[async_trait::async_trait]
+#[async_trait]
 impl<T: MessagePublisher + Send + Sync> TipQueryer for T {
     async fn query_last_tip(&self, network: Network, stream_id: &StreamId) -> anyhow::Result<()> {
         let stream_id_str = stream_id.to_string();
