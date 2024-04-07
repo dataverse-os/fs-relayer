@@ -1,0 +1,70 @@
+schema {
+  query: RootQuery
+  mutation: RootMutation
+}
+
+type Dapp {
+  id: String!
+  createdAt: Float!
+  updatedAt: Float!
+  deletedAt: Float
+  name: String!
+  logo: String!
+  website: [String!]!
+  defaultFolderName: String!
+  description: String!
+  models: [Model!]!
+  address: String!
+  ceramic: String!
+}
+
+input DeployDappInput {
+  name: String!
+  logo: String!
+  website: [String!]!
+  defaultFolderName: String!
+  description: String!
+  models: [InputModel!]!
+  ceramicUrl: String
+}
+
+input InputModel {
+  schema: String!
+  isPublicDomain: Boolean!
+  encryptable: [String!]!
+}
+
+input Message {
+  origin: String!
+  signature: String!
+}
+
+type Model {
+  modelName: String!
+  internal: Boolean!
+  streams: [ModelStream!]!
+}
+
+type ModelStream {
+  modelId: String!
+  createdAt: Float!
+  schema: String!
+  isPublicDomain: Boolean!
+  encryptable: [String!]!
+  version: Int!
+  latest: Boolean!
+}
+
+type RootMutation {
+  deployDapp(id: String, input: DeployDappInput!, message: Message!): Dapp!
+}
+
+type RootQuery {
+  getFileSystemModels: [String!]!
+  getDapp(id: String, modelId: String): Dapp!
+  getDapps(address: String, limit: Int, offset: Int): [Dapp!]!
+}
+
+type _Service {
+  sdl: String!
+}

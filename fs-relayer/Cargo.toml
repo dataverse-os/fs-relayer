@@ -1,0 +1,46 @@
+[package]
+name = "dataverse-file-relayer"
+version = "0.1.0"
+edition = "2021"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4.4.0"
+anyhow = "1.0.75"
+chrono = "0.4.31"
+confy = "0.5.1"
+ceramic-box = { workspace = true }
+dataverse-file-types = { workspace = true }
+dataverse-iroh-store =  { workspace = true }
+dataverse-pgsql-store =  { workspace = true }
+derive_more = "0.99.17"
+directories = "5.0.1"
+env_logger = "0.10.0"
+futures = "0.3.29"
+int-enum = "0.5.0"
+log = "0.4.20"
+serde = "1.0.190"
+serde_json = "1.0.108"
+tokio = "1.33.0"
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"
+uuid = "1.5.0"
+async-trait = "0.1.77"
+openssl = "0.10.62"
+fang = { workspace = true }
+postgres-openssl = { workspace = true }
+
+[patch.'https://github.com/ceramicnetwork/rust-ceramic']
+ceramic-event = { git = "https://github.com/dataverse-os/rust-ceramic", branch = "patch-kubo-block-put" }
+ceramic-kubo-rpc-server = { git = "https://github.com/dataverse-os/rust-ceramic", branch = "patch-kubo-block-put" }
+
+[patch.'https://github.com/3box/rust-ceramic']
+ceramic-event = { git = "https://github.com/dataverse-os/rust-ceramic", branch = "patch-kubo-block-put" }
+
+[patch.'https://github.com/3box/ceramic-http-client-rs']
+ceramic-http-client = { git = "https://github.com/dataverse-os/ceramic-http-client-rs", branch = "patch-methods"}
+
+[[bin]]
+name = "dataverse-file-relayer"
+test = false
+bench = false
