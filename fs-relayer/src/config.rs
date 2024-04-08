@@ -16,12 +16,12 @@ pub struct Config {
     pub queue_pool: u32,
     pub queue_worker: u32,
 
-    pub cache_size: usize,
     pub index_models: IndexModels,
     pub ceramic: String,
 
     pub pgsql_dsn: Option<String>,
     pub iroh: Option<IrohConfig>,
+    pub redis: RedisConfig,
 }
 
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize, Default)]
@@ -30,6 +30,13 @@ pub struct IrohConfig {
     author: String,
     model: String,
     streams: String,
+}
+
+
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize, Default)]
+pub struct RedisConfig {
+    pub url : String,
+    pub exp_seconds: u64,
 }
 
 impl From<IrohConfig> for dataverse_iroh_store::KeySet {

@@ -46,8 +46,10 @@ async fn main() -> anyhow::Result<()> {
     // setup task queue
     let queue = fs_task::task_queue(&cfg).await?;
 
+    let redis_cli = redis_store(&cfg)?;
+
     // setup kubo operator
-    let (kubo_client, operator) = kubo_operator(&cfg, queue).await?;
+    let (kubo_client, operator) = kubo_operator(&cfg, queue, redis_cli).await?;
 
     // running migration
     migration(&cfg, operator.clone()).await?;
@@ -128,15 +130,21 @@ async fn iroh_store(
     anyhow::bail!("iroh is not set");
 }
 
+fn redis_store(cfg: &Config) -> anyhow::Result<Arc<redis::Client>> {
+    let client = redis::Client::open(cfg.redis.url.clone())?;
+    Ok(Arc::new(client))
+}
+
 async fn kubo_operator(
     cfg: &Config,
     queue: fs_task::Queue,
+    redis: Arc<redis::Client>
 ) -> anyhow::Result<(Arc<kubo::Client>, Arc<dyn StreamOperator>)> {
     let kubo: Arc<kubo::Client> = Arc::new(kubo::new(&cfg.kubo_path));
     let queue = Arc::new(Mutex::new(queue));
 
     let operator: Arc<dyn StreamOperator> =
-        Arc::new(kubo::Cached::new(kubo.clone(), queue, cfg.cache_size)?);
+        Arc::new(kubo::Cached::new(kubo.clone(), queue, redis, cfg.redis.exp_seconds));
     Ok((kubo, operator))
 }
 

@@ -1,10 +1,10 @@
 extern crate lru;
 
-use crate::{Cid, StreamId};
+use ceramic_core::{Cid, StreamId};
 use fang::{AsyncQueue, AsyncQueueable};
-use lru::LruCache;
 use postgres_openssl::MakeTlsConnector;
-use std::{num::NonZeroUsize, sync::Arc};
+use std::{sync::Arc};
+use redis::{AsyncCommands};
 use tokio::sync::Mutex;
 
 use crate::{http, Ceramic, Event, EventValue, StreamLoader};
@@ -18,44 +18,40 @@ use super::{
 pub struct Cached {
     pub client: Arc<Client>,
     pub queue: Arc<Mutex<AsyncQueue<MakeTlsConnector>>>,
-    pub cache: Arc<Mutex<LruCache<Cid, Vec<u8>>>>,
+    pub redis_cli: Arc<redis::Client>,
+    pub exp_seconds: u64,
 }
 
 impl Cached {
     pub fn new(
         client: Arc<Client>,
         queue: Arc<Mutex<AsyncQueue<MakeTlsConnector>>>,
-        cache_size: usize,
-    ) -> anyhow::Result<Self> {
-        let cap = match NonZeroUsize::new(cache_size) {
-            Some(cap) => cap,
-            None => anyhow::bail!("{} is not a valid cache size", cache_size),
-        };
-        Ok(Self {
+        redis_cli: Arc<redis::Client>,
+        exp_seconds : u64,
+    ) -> Self {
+        Self {
             client,
             queue,
-            cache: Arc::new(Mutex::new(LruCache::new(cap))),
-        })
+            redis_cli,
+            exp_seconds
+        }
     }
 }
 
 impl StreamLoader for Cached {}
 
-#[async_trait]
+
+#[async_trait::async_trait]
 impl CidLoader for Cached {
     async fn load_cid(&self, cid: &Cid) -> anyhow::Result<Vec<u8>> {
-        let data_opt;
-        {
-            let mut cache = self.cache.lock().await;
-            data_opt = cache.get(cid).map(|data| data.to_vec());
-        }
+        let mut conn = self.redis_cli.get_multiplexed_async_connection().await?;
+        let data_opt : Option<Vec<u8>> = conn.get(cid.to_string()).await.ok();
         if let Some(data) = data_opt {
             return Ok(data);
         }
         match self.client.load_cid(cid).await {
             Ok(data) => {
-                let mut cache = self.cache.lock().await;
-                cache.put(*cid, data.to_vec());
+                let _: () = conn.set_ex(cid.to_string(), data.clone(), self.exp_seconds).await?;
                 Ok(data)
             }
             Err(err) => Err(err),
@@ -63,10 +59,11 @@ impl CidLoader for Cached {
     }
 }
 
-#[async_trait]
+#[async_trait::async_trait]
 impl BlockUploader for Cached {
     async fn block_upload(&self, cid: Cid, block: Vec<u8>) -> anyhow::Result<()> {
-        self.cache.lock().await.put(cid, block.clone());
+        let mut conn = self.redis_cli.get_multiplexed_async_connection().await?;
+        let _ : () = conn.set_ex(cid.to_string(), block.clone(), self.exp_seconds).await?;
         let task = BlockUploadHandler { cid, block };
         if let Err(err) = self.queue.lock().await.insert_task(&task).await {
             log::error!("failed to insert task: {}", err);
@@ -75,7 +72,7 @@ impl BlockUploader for Cached {
     }
 }
 
-#[async_trait]
+#[async_trait::async_trait]
 impl MessagePublisher for Cached {
     async fn publish_message(&self, topic: &str, msg: Vec<u8>) -> anyhow::Result<()> {
         let task = UpdateMessagePublishHandler {
@@ -89,7 +86,7 @@ impl MessagePublisher for Cached {
     }
 }
 
-#[async_trait]
+#[async_trait::async_trait]
 impl AnchorRuester for Cached {
     async fn request_anchor(
         &self,

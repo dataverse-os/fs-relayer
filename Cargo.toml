@@ -65,6 +65,7 @@ diesel = { version = "2.1.4", default-features = false, features = [
   "serde_json",
   "postgres_backend",
 ] }
+redis = {version = "0.25.2", features = ["r2d2", "ahash", "tokio-comp", "keep-alive"]}
 
 [patch.'https://github.com/ceramicnetwork/rust-ceramic']
 ceramic-core = { git = "https://github.com/dataverse-os/rust-ceramic", branch = "patch-kubo-block-put" }

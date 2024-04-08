@@ -47,3 +47,4 @@ tokio = { workspace = true }
 tracing = { workspace = true }
 unsigned-varint = "0.7.2"
 url = { workspace = true }
+redis = {workspace = true }
