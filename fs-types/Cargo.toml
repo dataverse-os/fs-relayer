@@ -28,4 +28,4 @@ uuid = { workspace = true }
 dapp-table-client = { workspace = true }
 once_cell = { workspace = true }
 tokio = { workspace = true }
-
+redis = {workspace = true}
