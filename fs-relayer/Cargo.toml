@@ -30,6 +30,7 @@ openssl = "0.10.62"
 fang = { workspace = true }
 postgres-openssl = { workspace = true }
 redis = { workspace = true }
+http = "1.1.0"
 
 [patch.'https://github.com/ceramicnetwork/rust-ceramic']
 ceramic-event = { git = "https://github.com/dataverse-os/rust-ceramic", branch = "patch-kubo-block-put" }

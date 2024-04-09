@@ -26,11 +26,18 @@ impl AppState {
     ) -> anyhow::Result<StreamStateResponse> {
         let stream_id = genesis.stream_id()?;
         let commit: Event = genesis.genesis.try_into()?;
-        let state = self
+        let result = self
             .file_client
             .save_event(dapp_id, &stream_id, &commit)
-            .await?;
-        state.try_into()
+            .await;
+        if let Err(err) = &result {
+            tracing::warn!(
+                dapp_id = dapp_id.to_string(),
+                "create stream error: {}",
+                err
+            );
+        }
+        result?.try_into()
     }
 
     pub async fn update_stream(
@@ -39,11 +46,18 @@ impl AppState {
         data: commit::Data,
     ) -> anyhow::Result<StreamStateResponse> {
         let commit: Event = data.commit.try_into()?;
-        let state = self
+        let result = self
             .file_client
             .save_event(dapp_id, &data.stream_id, &commit)
-            .await?;
-        state.try_into()
+            .await;
+        if let Err(err) = &result {
+            tracing::warn!(
+                dapp_id = dapp_id.to_string(),
+                "update stream error: {}",
+                err
+            );
+        }
+        result?.try_into()
     }
 
     pub async fn load_stream(
@@ -51,10 +65,17 @@ impl AppState {
         dapp_id: &uuid::Uuid,
         stream_id: &StreamId,
     ) -> anyhow::Result<StreamStateResponse> {
-        self.file_client
-            .load_stream(dapp_id, stream_id)
-            .await?
-            .try_into()
+        let result = self.file_client.load_stream(dapp_id, stream_id).await;
+        if let Err(err) = &result {
+            tracing::warn!(
+                format = "ceramic",
+                stream_id = stream_id.to_string(),
+                dapp_id = dapp_id.to_string(),
+                "load stream error: {}",
+                err
+            );
+        }
+        result?.try_into()
     }
 
     pub async fn load_file(
@@ -62,7 +83,17 @@ impl AppState {
         dapp_id: &uuid::Uuid,
         stream_id: &StreamId,
     ) -> anyhow::Result<File> {
-        self.file_client.load_file(dapp_id, stream_id).await
+        let result = self.file_client.load_file(dapp_id, stream_id).await;
+        if let Err(err) = &result {
+            tracing::warn!(
+                format = "dataverse",
+                stream_id = stream_id.to_string(),
+                dapp_id = dapp_id.to_string(),
+                "load stream error: {}",
+                err
+            );
+        }
+        result
     }
 
     pub async fn load_files(
@@ -71,9 +102,19 @@ impl AppState {
         model_id: &StreamId,
         options: Vec<LoadFilesOption>,
     ) -> anyhow::Result<Vec<File>> {
-        self.file_client
-            .load_files(account, model_id, options)
-            .await
+        let result = self
+            .file_client
+            .load_files(account.clone(), model_id, options)
+            .await;
+        if let Err(err) = &result {
+            tracing::warn!(
+                model_id = model_id.to_string(),
+                account = account,
+                "load streams error: {}",
+                err
+            );
+        }
+        return result;
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::error::FileClientError;
+use crate::error::AppError;
 use anyhow::Result;
 use ceramic_box::event::{Event, EventValue, VerifyOption};
 use ceramic_box::{StreamId, StreamState};
@@ -49,7 +49,7 @@ impl FileTrait for Client {
         let model_id = &stream_state.must_model()?;
         let model = dapp_store::get_model(model_id).await?;
         if model.dapp_id != *dapp_id {
-            anyhow::bail!(FileClientError::StreamWithModelNotInDapp(
+            anyhow::bail!(AppError::StreamWithModelNotInDapp(
                 stream_id.clone(),
                 model_id.clone(),
                 *dapp_id
@@ -293,7 +293,7 @@ impl EventSaver for Client {
                         ),
                         None => {
                             if !signed.is_gensis() {
-                                anyhow::bail!(FileClientError::CommitStreamIdNotFoundOnStore(
+                                anyhow::bail!(AppError::CommitStreamIdNotFoundOnStore(
                                     stream_id.clone()
                                 ));
                             }
@@ -311,7 +311,7 @@ impl EventSaver for Client {
 
                 if let Some(prev) = event.prev()? {
                     if commits.iter().all(|ele| ele.cid != prev) {
-                        anyhow::bail!(FileClientError::NoPrevCommitFound);
+                        anyhow::bail!(AppError::NoPrevCommitFound);
                     }
                 }
                 commits.push(event.clone());
@@ -340,7 +340,7 @@ impl EventSaver for Client {
                 Ok(state)
             }
             EventValue::Anchor(_) => {
-                anyhow::bail!(FileClientError::AnchorCommitUnsupported);
+                anyhow::bail!(AppError::AnchorCommitUnsupported);
             }
         }
     }
